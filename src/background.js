@@ -23,4 +23,4 @@ function checkSubscriptions() {
     // makes an api call with all the user's subscribed playlists
 }
 
-chrome.runtime.onMessage.addListener(checkSubscriptions, 60000); // checks subscriptions every 60 seconds
+setInterval(checkSubscriptions, 60000); // checks subscriptions every 60 seconds

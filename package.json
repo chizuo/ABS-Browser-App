@@ -3,7 +3,7 @@
     "description": "browser extension for subscribing to playlists versus channels",
     "version": "0.0.1",
     "homepage": "http://chrome.google.com/webstore",
-    "author": "ENTER YOUR NAME HERE",
+    "author": "Jonathan Chua",
     "repository": {
         "type": "git",
         "url": "ENTER GIT REPO URL"
