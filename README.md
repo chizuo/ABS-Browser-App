@@ -14,7 +14,16 @@ browser extension for subscribing to playlists versus channels
 | `npm run sync` | update config files |
 
 
-### How it works
+### How to install
 
-**Placeholder**
+**Google Chrome**
+- Navigate to your extension manager or enter : `chrome://extensions/` in the browser for the URL
+- Enable `Developer mode`
+- Select `Load unpacked`
+- Go to the folder that contains `manifest.json` and select that folder to load
 
+**Microsoft Edge**
+- Navigate to your extension manager or enter : `edge://extensions/` in the browser for the URL
+- Enable `Developer mode`
+- Select `Load unpacked`
+- Go to the folder that contains `manifest.json` and select that folder to load
