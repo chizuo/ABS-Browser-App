@@ -1,6 +1,6 @@
-# a-better-subcribe-system
+# A Better Subcription System
 
-browser extension for subscribing to playlists versus channels
+A browser extension for subscribing to playlists versus channels in YouTube.
 
 ## Available Commands
 
