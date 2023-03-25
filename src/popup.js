@@ -47,7 +47,11 @@ function init() {
             <li class="nav-item ms-auto">
                 <a class="nav-link" href="#" id="playlist-options">Playlist Options</a>
             </li>
+            <li class="nav-item ms-auto">
+                <a class="nav-link" href="#" id="log-off">Log off</a>
+            </li>
         `);
+        $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
         playlist();
     } else {
         $('.navbar-nav').html(`

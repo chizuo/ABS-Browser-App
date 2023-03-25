@@ -267,11 +267,14 @@ function register() {
 
 function login(event) {
     event.preventDefault();
-    localStorage.setItem('abs_account', JSON.stringify(account));
-    window.location.href = 'popup.html';
-    //let data = { email: $('#email').val(), password: $('#password').val() }
-    //console.log(`http post to: ${loginURL} with ${JSON.stringify(data)}`);
-    /*
+    if($('#email').val() === 'demo@demo.demo') {
+        localStorage.setItem('abs_account', JSON.stringify(account));
+        window.location.href = 'popup.html';
+    } else { }
+    
+    let data = { email: $('#email').val(), password: $('#password').val() }
+    console.log(`http post to: ${loginURL} with ${JSON.stringify(data)}`);
+    
     fetch(url, {
         method: 'POST',
         headers: {
@@ -287,7 +290,7 @@ function login(event) {
     .catch(error => {
         // Code to handle errors
         console.error(error);
-    }); */
+    });
 }
 
 function init() {
