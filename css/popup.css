@@ -39,3 +39,8 @@ ul.playlist li:nth-child(even) {
    background-color: lightgray;
    margin-left: -32px;
 }
+
+#account-warning {
+   padding: 15px;
+   font-size: 85%;
+}

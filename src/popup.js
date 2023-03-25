@@ -60,7 +60,10 @@ function init() {
             </li>
         `);
         $('#popup-body').html(`
-            <p>An account is required to use this extension and all of its features</p>
+            <h3 id="account-warning">An account is required to use this extension and all of its features</h3>
+            <div class="p-3">
+                <a href="login.html" class="btn btn-secondary">Login</a>
+            </div>
         `);
     }
 }
