@@ -2,40 +2,46 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 
 function playlist() {
     if(account.playlists.length === 0) {
-        console.log('playlist is empty');
         $('#popup-body').html(`
             <p>Subscribe to a playlist</p>
         `);
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
-            let { title, playlist }  = account.playlists[i];
-            $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 title-bar" index="${i}">${title}</div><ul class="playlist" id="${i}"></ul>`);
-            for(let j = 0; j < playlist.length; j++) {
-                if(!playlist[j].watched)
-                    $(`#${i}`).append(`<li><a href="${playlist[j].url}" class="playlist-entry" target="_blank" playlist="${i}" video="${j}">${playlist[j].title}</a></li>`);
+            let { title, videos }  = account.playlists[i];
+            $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
+                ${title}
+            </div>
+            <ul class="playlist" id="playlist-${i}"></ul>`);
+            for(let j = 0; j < videos.length; j++) {
+                if(!videos[j].watched)
+                    $(`#playlist-${i}`).append(`<li><a href="${videos[j].url}" class="playlist-entry" target="_blank" playlist="${i}" video="${j}">${videos[j].title}</a></li>`);
             }
         }
 
-        $('.title-bar').click(function() {
-            let id = $(this).attr('index');
-            if($(`#${id}`).is(':hidden'))
-                $(`#${id}`).show();
-            else
-                $(`#${id}`).hide();
-        });
+        $('.title-bar').click(hide);
 
-        $('.playlist-entry').click(e => {
-            e.preventDefault();
-            let url = $(e.currentTarget).attr('href');
-            let playlist = $(e.currentTarget).attr('playlist');
-            let video = $(e.currentTarget).attr('video');
-            account.playlists[playlist].playlist[video].watched = true;
-            localStorage.setItem('abs_account', JSON.stringify(account));
-            $(e.currentTarget).hide();
-            //console.log(`title: ${account.playlists[playlist].playlist[video].title} \nurl:${account.playlists[playlist].playlist[video].url} \nwatched:${account.playlists[playlist].playlist[video].watched}`);
-            window.open(url)
-        }); 
+        $('.playlist-entry').click(watched); 
     }
+}
+
+function hide() {
+    let id = $(this).attr('index');
+    if($(`#playlist-${id}`).is(':hidden'))
+        $(`#playlist-${id}`).show();
+    else
+        $(`#playlist-${id}`).hide();
+}
+
+function watched(e) {
+    e.preventDefault();
+    let url = $(this).attr('href');
+    let playlist = $(this).attr('playlist');
+    let video = $(this).attr('video');
+    console.log(`playlist:${playlist}, video:${video}`);
+    account.playlists[playlist].videos[video].watched = true;
+    localStorage.setItem('abs_account', JSON.stringify(account));
+    $(this).hide();
+    window.open(url)
 }
 
 function init() {

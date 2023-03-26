@@ -4,7 +4,7 @@ const loginURL = "loginURL";
 const account = {
     email: 'jon.chua51@gmail.com',
     playlists: [
-        { title: "The Code Report", playlist: [
+        { title: "The Code Report", videos: [
             {
                 title: "How a CS student tracks Elon’s Private Jet with Python // The Code Report",
                 url: "https://www.youtube.com/watch?v=bJUl3OAIT0k",
@@ -191,7 +191,7 @@ const account = {
                 watched: false
             }
         ]},
-        { title: "Survival Logic", playlist: [
+        { title: "Survival Logic", videos: [
             {
                 title: "Survival Logic Trailer",
                 url: "https://www.youtube.com/watch?v=qip-dyjIj4s",
