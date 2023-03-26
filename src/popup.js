@@ -7,9 +7,9 @@ function playlist() {
         `);
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
-            let { title, videos }  = account.playlists[i];
+            let { playlist_title, videos }  = account.playlists[i];
             $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
-                ${title}
+                ${playlist_title}
             </div>
             <ul class="playlist" id="playlist-${i}"></ul>`);
             for(let j = 0; j < videos.length; j++) {
