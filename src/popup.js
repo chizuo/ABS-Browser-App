@@ -9,7 +9,7 @@ function playlist() {
         for(let i = 0; i < account.playlists.length; i++) {            
             let { playlist_title, videos }  = account.playlists[i];
             $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
-                ${playlist_title}
+                <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> ${playlist_title}
             </div>
             <ul class="playlist" id="playlist-${i}"></ul>`);
             for(let j = 0; j < videos.length; j++) {
@@ -18,7 +18,7 @@ function playlist() {
             }
         }
 
-        $('.title-bar').click(hide);
+        $('.expansion-button').click(hide);
 
         $('.playlist-entry').click(watched); 
     }
@@ -26,10 +26,14 @@ function playlist() {
 
 function hide() {
     let id = $(this).attr('index');
-    if($(`#playlist-${id}`).is(':hidden'))
+    if($(`#playlist-${id}`).is(':hidden')) {
         $(`#playlist-${id}`).show();
-    else
+        $(`#expansion-button-${id}`).html('<img src="assets/img/active/playlist_tracker_icon_24.png">');
+    } else {
         $(`#playlist-${id}`).hide();
+        $(`#expansion-button-${id}`).html('<img src="assets/img/inactive/playlist_tracker_icon_24.png">');
+    }
+        
 }
 
 function watched(e) {

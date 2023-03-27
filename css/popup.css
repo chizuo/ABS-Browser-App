@@ -44,3 +44,7 @@ ul.playlist li:nth-child(even) {
    padding: 15px;
    font-size: 85%;
 }
+
+.expansion-button:hover {
+   cursor: pointer;
+}
