@@ -2,7 +2,7 @@
     "name": "A Better Subscription Service",
     "short_name": "ABS extension",
     "description": "Browser extension that helps you subscribe to playlists",
-    "homepage_url": "https://github.com/chizuo/COMP680-App",
+    "homepage_url": "https://github.com/chizuo/COMP583-G1-Extension",
     "version": "0.1",
     "version_name": "0.1",
     "manifest_version": 3,
