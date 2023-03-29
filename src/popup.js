@@ -7,20 +7,20 @@ function playlist() {
         `);
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
-            let { playlist_title, videos }  = account.playlists[i];
+            let { playlist_title, contents }  = account.playlists[i];
             $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
                 <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> ${playlist_title}
             </div>
             <ul class="playlist" id="playlist-${i}"></ul>`);
-            for(let j = 0; j < videos.length; j++) {
-                if(!videos[j].watched)
-                    $(`#playlist-${i}`).append(`<li><a href="${videos[j].url}" class="playlist-entry" target="_blank" playlist="${i}" video="${j}">${videos[j].title}</a></li>`);
+            for(let j = 0; j < contents.length; j++) {
+                if(!contents[j].viewed)
+                    $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
             }
         }
 
         $('.expansion-button').click(hide);
 
-        $('.playlist-entry').click(watched); 
+        $('.playlist-entry').click(viewed); 
     }
 }
 
@@ -36,13 +36,13 @@ function hide() {
         
 }
 
-function watched(e) {
+function viewed(e) {
     e.preventDefault();
     let url = $(this).attr('href');
     let playlist = $(this).attr('playlist');
-    let video = $(this).attr('video');
-    console.log(`playlist:${playlist}, video:${video}`);
-    account.playlists[playlist].videos[video].watched = true;
+    let content = $(this).attr('content');
+    console.log(`playlist:${playlist}, content:${content}`);
+    account.playlists[playlist].contents[content].viewed = true;
     localStorage.setItem('abs_account', JSON.stringify(account));
     $(this).hide();
     window.open(url)
