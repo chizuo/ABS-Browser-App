@@ -1,6 +1,3 @@
-const registerURL = "registerURL";
-const loginURL = "loginURL";
-
 // Sample account data structure
 const account = {
     email: 'jon.chua51@gmail.com',
@@ -192,7 +189,7 @@ const account = {
                 viewed: false
             }
         ]},
-        { playlist_title: "Survival Logic", plid:"", clicked: 0, contents: [
+        { playlist_title: "Survival Logic", plid:"PLSMETuURtTXClX140WdPx9LX8dQts6c1x", clicked: 0, contents: [
             {
                 title: "Survival Logic Trailer",
                 url: "https://www.youtube.com/watch?v=qip-dyjIj4s",
@@ -242,56 +239,28 @@ function register() {
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
 
-    $('form').submit(function(event) {
+    $('form').submit(async function(event) {
         event.preventDefault();
-        let data = { email: $('#email').val(), password: $('#password').val() }
-        console.log(`http post to: ${registerURL} with ${JSON.stringify(data)}`);
-        /*
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Code to handle the response data
-            console.log(data);
-        })
-        .catch(error => {
-            // Code to handle errors
-            console.error(error);
-        }); */
+        try {
+            const response = await axios.post('http://localhost:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
+            localStorage.setItem('abs_account', JSON.stringify(response.data));
+            window.location.href = 'popup.html';
+        } catch(e) {
+            console.log(e.message);
+        }
     });
 }
 
-function login(event) {
+async function login(event) {
     event.preventDefault();
     if($('#email').val() === 'demo@demo.demo') {
         localStorage.setItem('abs_account', JSON.stringify(account));
         window.location.href = 'popup.html';
-    } else { }
-    
-    let data = { email: $('#email').val(), password: $('#password').val() }
-    console.log(`http post to: ${loginURL} with ${JSON.stringify(data)}`);
-    
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Code to handle the response data
-        console.log(data);
-    })
-    .catch(error => {
-        // Code to handle errors
-        console.error(error);
-    });
+    } else { 
+        const response = await axios.post('http://localhost:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
+        localStorage.setItem('abs_account', JSON.stringify(response.data));
+        window.location.href = 'popup.html';
+    }
 }
 
 function init() {

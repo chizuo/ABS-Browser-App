@@ -49,6 +49,7 @@ function viewed(e) {
 }
 
 function init() {
+    console.log(account);
     if(account !== null) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
