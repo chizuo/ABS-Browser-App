@@ -248,6 +248,8 @@ function register() {
         <div class="container" id="system"></div>
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
+    $('#register-button').prop('disabled', true);
+    $('#confirm-password').prop('disabled', true);
     $('#password').on('input', checkStrength);
     $('#confirm-password').on('input', validatePassword);
 
@@ -283,7 +285,6 @@ async function login(event) {
 
 function checkStrength() {
     let password = $('#password').val();
-    let confirmPassword = $('#confirm-password').val();
     let message = "";
     
     if(password.length > 0) {
@@ -301,12 +302,13 @@ function checkStrength() {
     if(message.length > 0) $('#system').html(`<div>Password requirements:</div>${message}`); 
     else $('#system').html('');
 
-    if (password !== confirmPassword && !upperReq && !numberReq && !startReq && !lengthReq) {
-        $('#confirm-password').addClass('is-invalid');
-        $('#register-button').prop('disabled', true);
+    if (upperReq && numberReq && startReq && lengthReq) {
+        $('#password').removeClass('is-invalid');
+        $('#confirm-password').prop('disabled', false);
+        if(($('#confirm-password').val()).length) validatePassword();
     } else {
-        $('#confirm-password').removeClass('is-invalid');
-        $('#register-button').prop('disabled', false);
+        $('#password').addClass('is-invalid');
+        $('#confirm-password').prop('disabled', true);
     }
 }
 

@@ -3,7 +3,10 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 function playlist() {
     if(account.playlists.length === 0) {
         $('#popup-body').html(`
-            <p>Subscribe to a playlist</p>
+            <div class="container p-5 text-center">
+                Your account does not have any playlists it is subscribed to. Navigate to the playlist manager to subscribe to one.
+            </div>
+            
         `);
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
@@ -40,9 +43,11 @@ function viewed(e) {
     let url = $(this).attr('href');
     let playlist = $(this).attr('playlist');
     let content = $(this).attr('content');
-    console.log(`playlist:${playlist}, content:${content}`);
+    //console.log(`playlist:${playlist}, content:${content}`);
     account.playlists[playlist].contents[content].viewed = true;
+    account.playlists[playlist].clicked += 1;
     localStorage.setItem('abs_account', JSON.stringify(account));
+    console.log(`playlist-clicks:${account.playlists[playlist].clicked}`);
     $(this).hide();
     window.open(url)
 }
@@ -62,6 +67,7 @@ function init() {
             </li>
         `);
         $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
+        $('#playlist-options').click(function() { window.location.href = 'playlists.html' });
         playlist();
     } else {
         $('.navbar-nav').html(`
