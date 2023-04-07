@@ -56,7 +56,6 @@ async function logoff() {
     } catch(e) {
         $('#system').html(e.message);
     }
-    
 }
 
 async function init() {

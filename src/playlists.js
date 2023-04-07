@@ -4,13 +4,13 @@ chrome.storage.local.get('abs_account', result => { account = result.abs_account
 function playlistManager() {
     $('#app').html(`
         <div class="row align-items-md-stretch justify-content-center p-5">
-            <div class="col-md-6 mx-auto">
-                <button class="btn btn-outline-secondary button-container" type="button" id="subscribe-button">Subscribe to playlist</button>
+            <div class="col-md-6 mx-auto p-1">
+                <button class="btn btn-outline-secondary button-container" type="button" id="subscribe-button">Subscribe to a playlist</button>
             </div>
-            <div class="col-md-6 mx-auto">
+            <div class="col-md-6 mx-auto p-1">
                 <button class="btn btn-outline-secondary button-container" type="button" id="update-name-button">Update a playlist's name</button>
             </div>
-            <div class="col-md-6 mx-auto">
+            <div class="col-md-6 mx-auto p-1">
                 <button class="btn btn-outline-secondary button-container" type="button" id="content-button">Manage playlist content</button>
             </div>
         </div>
@@ -74,7 +74,7 @@ async function query(event) {
         const response = await axios.post('http://chuadevs.com:12312/v1/api/youtube', { url: url });
         account.playlists.push(response.data);
         account.actions += 1;
-        await chrome.storage.local.set({ "abs_account": response.data });
+        await chrome.storage.local.set({ "abs_account": account });
         window.location.href = 'popup.html';
     } catch(e) {
         $('#system').html(e.message);
