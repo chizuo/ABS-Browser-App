@@ -2,12 +2,10 @@ var lengthReq = false;
 var upperReq = false;
 var numberReq = false;
 var startReq = false;
+var validEmail = false;
+const emailRegex = /\S+@\S+\.\S+/;
 
-function register() {
-    $('.navbar-nav').html(`<li class="nav-item ms-auto">
-        <a class="nav-link active register" aria-current="page" href="#">Register</a>
-    </li>`);
-
+function registerForm() {
     $('#form-app').html(`
         <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Please complete to register</h1>
@@ -32,6 +30,7 @@ function register() {
         <div class="container" id="system"></div>
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
+    $('#email').on('input', () => { validEmail = emailRegex.test($('#email').val()); });
     $('#register-button').prop('disabled', true);
     $('#confirm-password').prop('disabled', true);
     $('#password').on('input', checkStrength);
@@ -42,7 +41,7 @@ function register() {
         $('#system').html('');
         try {
             const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
-            localStorage.setItem('abs_account', JSON.stringify(response.data));
+            await chrome.storage.local.set({ "abs_account": response.data });
             window.location.href = 'popup.html';
         } catch(e) {
             $('#system').html(e.message);
@@ -55,7 +54,7 @@ async function login(event) {
     $('#system').html('');
     try {
         const response = await axios.post('http://chuadevs.com:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
-        localStorage.setItem('abs_account', JSON.stringify(response.data));
+        await chrome.storage.local.set({ "abs_account": response.data });
         window.location.href = 'popup.html';
     } catch(e) {
         $('#system').html(e.message);
@@ -81,7 +80,7 @@ function checkStrength() {
     if(message.length > 0) $('#system').html(`<div>Password requirements:</div>${message}`); 
     else $('#system').html('');
 
-    if (upperReq && numberReq && startReq && lengthReq) {
+    if (upperReq && numberReq && startReq && lengthReq && validEmail) {
         $('#password').removeClass('is-invalid');
         $('#confirm-password').prop('disabled', false);
         if(($('#confirm-password').val()).length) validatePassword();
@@ -105,9 +104,43 @@ function validatePassword() {
     }
 }
 
-function init() {
-    $('.register').click(register);
+function validateEmail() {
+    let email = $('#email').val();
+    if(emailRegex.test(email))
+        $('#signin-button').prop('disabled', false);
+    else
+        $('#signin-button').prop('disabled', true);
+}
+
+function loginForm() {
+    $('#form-app').html(`
+        <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+            <label for="email">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="password" placeholder="Password">
+            <label for="password">Password</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" id="signin-button" type="submit">Sign in</button>
+        <div class="container">
+            <span class="container-fluid py-2">
+                Need an account? <a href="#" class="register">Register</a>
+            </span>
+        </div>
+        <div class="container" id="system"></div>
+        <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
+    `);
+    $('.register').click(registerForm);
+    $('#signin-button').prop('disabled', true);
     $('#signin-button').click(login);
+    $('#email').on('input', function() { validateEmail() });
+}
+
+function init() {
+    loginForm();
 }
 
 $(document).ready(function() { init(); });

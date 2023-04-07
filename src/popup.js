@@ -1,4 +1,5 @@
-const account = JSON.parse(localStorage.getItem('abs_account'));
+var account;
+chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
 function playlist() {
     if(account.playlists.length === 0) {
@@ -35,7 +36,7 @@ function hide() {
     }
 }
 
-function viewed(e) {
+async function viewed(e) {
     e.preventDefault();
     let url = $(this).attr('href');
     let playlist = $(this).attr('playlist');
@@ -43,7 +44,7 @@ function viewed(e) {
     account.playlists[playlist].contents[content].viewed = true;
     account.playlists[playlist].clicked += 1;
     account.actions += 1;
-    localStorage.setItem('abs_account', JSON.stringify(account));
+    await chrome.storage.local.set({ "abs_account": response.data });
     $(this).hide();
     window.open(url)
 }
@@ -51,16 +52,15 @@ function viewed(e) {
 async function logoff() {
     try {
         await axios.put('http://chuadevs.com:12312/v1/account/sync', { email: account.email, actions: account.actions, playlists: account.playlists });
-        localStorage.removeItem('abs_account'); 
-        location.reload(); 
+        await chrome.storage.local.remove('abs_account', () => { location.reload(); })
     } catch(e) {
         $('#system').html(e.message);
     }
     
 }
 
-function init() {
-    if(account !== null) {
+async function init() {
+    if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
                 <a class="nav-link" href="#" id="account-options">Account Options</a>

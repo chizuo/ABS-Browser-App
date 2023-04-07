@@ -1,4 +1,5 @@
-const account = JSON.parse(localStorage.getItem('abs_account'));
+var account;
+chrome.storage.local.get('abs_account', result => { account = result.abs_account; })
 
 function playlistManager() {
     $('#app').html(`
@@ -54,10 +55,10 @@ async function query(event) {
             if(account.playlists[i].playlist_url == url) { new Error('You are already subscribed to this playlist'); }
         }
         
-        const response = await axios.post('http://localhost:12312/v1/api/youtube', { url: url });
+        const response = await axios.post('http://chuadevs.com:12312/v1/api/youtube', { url: url });
         account.playlists.push(response.data);
         account.actions += 1;
-        localStorage.setItem('abs_account', JSON.stringify(account));
+        await chrome.storage.local.set({ "abs_account": response.data });
         window.location.href = 'popup.html';
     } catch(e) {
         $('#system').html(e.message);
@@ -104,6 +105,7 @@ function main() {
 }
 
 function init() {
+    chrome.storage.local.get('abs_account', result => { account = result.abs_account; });
     main();
 }
 
