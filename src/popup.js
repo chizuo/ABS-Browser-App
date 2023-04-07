@@ -6,7 +6,6 @@ function playlist() {
             <div class="container p-5 text-center">
                 Your account does not have any playlists it is subscribed to. Navigate to the playlist manager to subscribe to one.
             </div>
-            
         `);
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
@@ -20,9 +19,7 @@ function playlist() {
                     $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
             }
         }
-
         $('.expansion-button').click(hide);
-
         $('.playlist-entry').click(viewed); 
     }
 }
@@ -43,17 +40,26 @@ function viewed(e) {
     let url = $(this).attr('href');
     let playlist = $(this).attr('playlist');
     let content = $(this).attr('content');
-    //console.log(`playlist:${playlist}, content:${content}`);
     account.playlists[playlist].contents[content].viewed = true;
     account.playlists[playlist].clicked += 1;
+    account.actions += 1;
     localStorage.setItem('abs_account', JSON.stringify(account));
-    console.log(`playlist-clicks:${account.playlists[playlist].clicked}`);
     $(this).hide();
     window.open(url)
 }
 
+async function logoff() {
+    try {
+        await axios.put('http://chuadevs.com:12312/v1/account/sync', { email: account.email, actions: account.actions, playlists: account.playlists });
+        localStorage.removeItem('abs_account'); 
+        location.reload(); 
+    } catch(e) {
+        $('#system').html(e.message);
+    }
+    
+}
+
 function init() {
-    console.log(account);
     if(account !== null) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
@@ -66,7 +72,7 @@ function init() {
                 <a class="nav-link" href="#" id="log-off">Log off</a>
             </li>
         `);
-        $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
+        $('#log-off').click(logoff);
         $('#playlist-options').click(function() { window.location.href = 'playlists.html' });
         playlist();
     } else {
@@ -81,6 +87,7 @@ function init() {
                 <a href="login.html" class="btn btn-secondary">Login</a>
             </div>
         `);
+        window.location.href = 'login.html'
     }
 }
 

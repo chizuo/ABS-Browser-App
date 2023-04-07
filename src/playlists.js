@@ -49,11 +49,14 @@ async function query(event) {
     $('#system').html('');
     try {
         const url = $('#playlist-url').val();
+
         for(let i = 0; i < account.playlists.length; i++) {
             if(account.playlists[i].playlist_url == url) { new Error('You are already subscribed to this playlist'); }
         }
+        
         const response = await axios.post('http://localhost:12312/v1/api/youtube', { url: url });
         account.playlists.push(response.data);
+        account.actions += 1;
         localStorage.setItem('abs_account', JSON.stringify(account));
         window.location.href = 'popup.html';
     } catch(e) {
