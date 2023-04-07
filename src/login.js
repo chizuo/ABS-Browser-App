@@ -53,17 +53,12 @@ function register() {
 async function login(event) {
     event.preventDefault();
     $('#system').html('');
-    if($('#email').val() === 'demo@demo.demo') {
-        localStorage.setItem('abs_account', JSON.stringify(account));
+    try {
+        const response = await axios.post('http://localhost:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
+        localStorage.setItem('abs_account', JSON.stringify(response.data));
         window.location.href = 'popup.html';
-    } else {
-        try {
-            const response = await axios.post('http://localhost:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
-            localStorage.setItem('abs_account', JSON.stringify(response.data));
-            window.location.href = 'popup.html';
-        } catch(e) {
-            $('#system').html(e.response.data);
-        }
+    } catch(e) {
+        $('#system').html(e.message);
     }
 }
 
