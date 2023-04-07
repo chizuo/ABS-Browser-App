@@ -105,7 +105,6 @@ function main() {
 }
 
 function init() {
-    chrome.storage.local.get('abs_account', result => { account = result.abs_account; });
     main();
 }
 
