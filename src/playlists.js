@@ -7,9 +7,17 @@ function playlistManager() {
             <div class="col-md-6 mx-auto">
                 <button class="btn btn-outline-secondary button-container" type="button" id="subscribe-button">Subscribe to playlist</button>
             </div>
+            <div class="col-md-6 mx-auto">
+                <button class="btn btn-outline-secondary button-container" type="button" id="update-name-button">Update a playlist's name</button>
+            </div>
+            <div class="col-md-6 mx-auto">
+                <button class="btn btn-outline-secondary button-container" type="button" id="content-button">Manage playlist content</button>
+            </div>
         </div>
     `);
     $('#subscribe-button').click(subscribe);
+    $('#update-name-button').click(updatePlaylistName);
+    $('#content-button').click(contentManager);
 }
 
 function subscribe() {
@@ -28,6 +36,14 @@ function subscribe() {
     $('#subscription-button').click(query);
     $('#subscription-button').prop('disabled', true);
     $('#playlist-url').on('input', validateYoutube);
+}
+
+function updatePlaylistName() {
+
+}
+
+function contentManager() {
+
 }
 
 function validateYoutube() {
