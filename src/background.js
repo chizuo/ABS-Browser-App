@@ -53,7 +53,6 @@ chrome.runtime.onMessage.addListener(messageHandler);
 function checkSubscriptions() {
   let newContent = false;
   let status = 0;
-  console.log(account);
   for(let i = 0; i < account.playlists.length; i++) {
     fetch('http://chuadevs.com:12312/v1/api/youtube', {
       method: "PUT",
@@ -87,7 +86,8 @@ function checkSubscriptions() {
   }
 }
 
-function syncAccount() {
+async function syncAccount() {
+  console.log(account);
   if(account !== undefined) {
     fetch('http://chuadevs.com:12312/v1/account/sync', {
       method: "PUT",

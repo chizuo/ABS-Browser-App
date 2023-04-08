@@ -103,7 +103,6 @@ function nav() {
 
 function main() {
     $('body').html(`
-    <main class="form-signin w-100 m-auto">
         <nav class="navbar navbar-light" style="background-color: #eef1ef;">
             <div class="container-fluid">
                 <a class="navbar-brand me-auto" href="#">
@@ -117,8 +116,7 @@ function main() {
                 </div>
             </div>
         </nav>   
-        <form id="app"></form>
-    </main>    
+        <div id="app"></div>
     `);
     nav();
     playlistManager();

@@ -6,7 +6,7 @@ var validEmail = false;
 const emailRegex = /\S+@\S+\.\S+/;
 
 function registerForm() {
-    $('#form-app').html(`
+    $('#app').html(`
         <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Please complete to register</h1>
         <div class="form-floating">
@@ -115,7 +115,7 @@ function validateEmail() {
 }
 
 function loginForm() {
-    $('#form-app').html(`
+    $('#app').html(`
         <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
         <div class="form-floating">

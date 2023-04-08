@@ -4,7 +4,7 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 function playlist() {
     console.log('building playlist');
     if(account.playlists.length === 0) {
-        $('#popup-body').html(`
+        $('#app').html(`
             <div class="container p-5 text-center">
                 Your account does not have any playlists it is subscribed to. Navigate to the playlist manager to subscribe to one.
             </div>
@@ -12,7 +12,7 @@ function playlist() {
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
             let { playlist_title, contents }  = account.playlists[i];
-            $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
+            $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
                 <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
                 <span class="mx-1">${playlist_title}</span>
                 <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
@@ -37,15 +37,15 @@ function playlist() {
     }
 }
 
-function markAll() {
+async function markAll() {
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
-    console.log(`Playlist${id}: ${account.playlists[id]}`);
     for(let i = 0; i < account.playlists[id].contents.length; i++)
     {
         account.playlists[id].contents[i].viewed = viewed;
     }
     account.actions += 1;
+    await chrome.storage.local.set({ "abs_account": account });
     localStorage.setItem('abs_account', JSON.stringify(account));
     location.reload();
 }
@@ -134,7 +134,7 @@ async function init() {
               <a class="nav-link active" aria-current="page" href="login.html">Login</a>
             </li>
         `);
-        $('#popup-body').html(`
+        $('#app').html(`
             <h3 id="account-warning">An account is required to use this extension and all of its features</h3>
             <div class="p-3">
                 <a href="login.html" class="btn btn-secondary">Login</a>
