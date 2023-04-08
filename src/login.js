@@ -41,8 +41,7 @@ function registerForm() {
         $('#system').html('');
         try {
             const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
-            localStorage.setItem(JSON.stringify(response.data));
-            //await chrome.storage.local.set({ "abs_account": response.data });
+            localStorage.setItem('abs_account', JSON.stringify(response.data));
             window.location.href = 'popup.html';
         } catch(e) {
             $('#system').html(e.message);
@@ -56,7 +55,6 @@ async function login(event) {
     try {
         const response = await axios.post('http://chuadevs.com:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
-        //await chrome.storage.local.set({ "abs_account": response.data });
         window.location.href = 'popup.html';
     } catch(e) {
         $('#system').html(e.message);

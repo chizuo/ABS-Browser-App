@@ -2,7 +2,6 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 //chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
 function playlist() {
-    console.log('building playlist');
     if(account.playlists.length === 0) {
         $('#app').html(`
             <div class="container p-5 text-center">
@@ -122,12 +121,10 @@ async function init() {
                     }
                 });
             } else {
-                console.log(`nothing to delete`);
+                console.log(`No new content`);
                 playlist();
-            }
-            
-        });
-        
+            } 
+        });  
     } else {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
