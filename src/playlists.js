@@ -98,7 +98,7 @@ function nav() {
             </li>
     `);
     $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
-    $('#playlist-views').click(function() { window.location.href = 'popup.html' });
+    $('#playlist-view').click(function() { window.location.href = 'popup.html' });
 }
 
 function main() {
