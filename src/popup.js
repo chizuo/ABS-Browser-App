@@ -13,7 +13,15 @@ function playlist() {
         for(let i = 0; i < account.playlists.length; i++) {            
             let { playlist_title, contents }  = account.playlists[i];
             $('#popup-body').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
-                <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> ${playlist_title}
+                <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
+                <span class="mx-1">${playlist_title}</span>
+                <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
+                <span class="popup-menu" id="popup-menu${i}">
+                    <ul>
+                        <li><button class="mark-all my-1 btn btn-secondary border button-container" type="button" id="${i}" marker="watch">Mark all as watched</button></li>
+                        <li><button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="unwatch">Mark all unwatched</button></li>
+                    </ul>
+                </span>
             </div>
             <ul class="playlist" id="playlist-${i}"></ul>`);
             for(let j = 0; j < contents.length; j++) {
@@ -21,8 +29,34 @@ function playlist() {
                     $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
             }
         }
+        $('.popup-menu').hide();
         $('.expansion-button').click(hide);
-        $('.playlist-entry').click(viewed); 
+        $('.playlist-entry').click(viewed);
+        $('.playlist-menu').click(playlistMenu);
+        $('.mark-all').click(markAll);
+    }
+}
+
+function markAll() {
+    let id = $(this).attr('id');
+    let viewed = $(this).attr('marker') === 'watch' ? true : false;
+    console.log(`Playlist${id}: ${account.playlists[id]}`);
+    for(let i = 0; i < account.playlists[id].contents.length; i++)
+    {
+        account.playlists[id].contents[i].viewed = viewed;
+    }
+    account.actions += 1;
+    localStorage.setItem('abs_account', JSON.stringify(account));
+    location.reload();
+}
+
+function playlistMenu() {
+    let id = $(this).attr('index');
+    if($(`#popup-menu${id}`).is(':hidden')) {
+        $('.popup-menu').hide();
+        $(`#popup-menu${id}`).show();
+    } else {
+        $(`#popup-menu${id}`).hide();
     }
 }
 
@@ -84,7 +118,7 @@ async function init() {
                         axios.put('http://chuadevs.com:12312/v1/account.sync', account);
                         location.reload();
                     } catch(e) {
-                        console.log(e.message);
+                        console.error(e.message);
                     }
                 });
             } else {
@@ -109,5 +143,11 @@ async function init() {
         window.location.href = 'login.html'
     }
 }
+
+$(document).click(function(e) {
+    if (!$(e.target).closest('.playlist-menu').length && !$(e.target).closest('.popup-menu').length) {
+      $('.popup-menu').hide();
+    }
+});
 
 $(document).ready(function() { init(); });
