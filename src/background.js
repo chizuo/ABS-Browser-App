@@ -1,7 +1,8 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
-const time = 15 * 60000; // equivalent to 15 minutes
+const subcriptionTime = 60*60000; // 60 minutes
+const accountTime = 30*60000 // 30 minutes
 var account;
-chrome.storage.local.get('abs_account', result => { account = result.abs_account; });
+chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
 const playlist = {
   url: "https://www.youtube.com/playlist?list=PLSMETuURtTXClX140WdPx9LX8dQts6c1x",
@@ -49,22 +50,22 @@ function messageHandler(request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(messageHandler);
 
-async function checkSubscriptions() {
+function checkSubscriptions() {
   let newContent = false;
+  let status = 0;
+  console.log(account);
   for(let i = 0; i < account.playlists.length; i++) {
-    await fetch('http://chuadevs.com:12312/v1/api/youtube', {
+    fetch('http://chuadevs.com:12312/v1/api/youtube', {
       method: "PUT",
       body:JSON.stringify(account.playlists[i]),
       headers: {
         'Content-Type': 'application/json'
       }
     }).then(response => {
-      if(response.status === 200)
-        return response.json();
-      else if(response.status === 204) 
-        return;
-      else
-        throw new Error("unexpected status code");
+      status = response.status;
+      if(response.status === 200) return response.json();
+      else if(response.status === 204) return;
+      else throw new Error("unexpected status code");
     }).then(data => {
       if(data) {
         newContent = true;
@@ -73,20 +74,33 @@ async function checkSubscriptions() {
         }
       }
     }).catch(error => console.error(`ERROR: ${error}`)); 
-  }
-
-  if(newContent) {
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: '../assets/img/active/playlist_tracker_icon_128.png',
-      title: 'A Better Subscription Service',
-      message: `You have new content to view`
-    });
+    if(newContent) {
+      chrome.storage.local.set({ "abs_account": account });
+      chrome.storage.local.set({ 'abs_newData' : account });
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: '../assets/img/active/playlist_tracker_icon_128.png',
+        title: 'A Better Subscription Service',
+        message: `You have new content to view`
+      });
+    } 
   }
 }
 
-async function syncAccount() {
-  
+function syncAccount() {
+  if(account !== undefined) {
+    fetch('http://chuadevs.com:12312/v1/account/sync', {
+      method: "PUT",
+      body:JSON.stringify(account),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => { 
+      if(response.ok)
+        console.log(`Background Sync Status: ${response.status}`);
+    }).catch(error => console.error(`ERROR: ${error.message}`)); 
+  }
 }
 
-setInterval(() => { checkSubscriptions(); syncAccount(); }, time); // checks subscriptions every 15 minutes
+setInterval(checkSubscriptions, subcriptionTime); // checks subscriptions every 60 minutes
+setInterval(syncAccount, accountTime); // sync user data with database every 30 minutes

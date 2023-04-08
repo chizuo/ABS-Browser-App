@@ -1,7 +1,8 @@
-var account;
-chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
+const account = JSON.parse(localStorage.getItem('abs_account'));
+//chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
 function playlist() {
+    console.log('building playlist');
     if(account.playlists.length === 0) {
         $('#popup-body').html(`
             <div class="container p-5 text-center">
@@ -44,14 +45,15 @@ async function viewed(e) {
     account.playlists[playlist].contents[content].viewed = true;
     account.playlists[playlist].clicked += 1;
     account.actions += 1;
-    await chrome.storage.local.set({ "abs_account": response.data });
+    localStorage.setItem('abs_account', JSON.stringify(account));
     $(this).hide();
     window.open(url)
 }
 
 async function logoff() {
     try {
-        await axios.put('http://chuadevs.com:12312/v1/account/sync', { email: account.email, actions: account.actions, playlists: account.playlists });
+        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+        localStorage.removeItem('abs_account');
         await chrome.storage.local.remove('abs_account', () => { location.reload(); })
     } catch(e) {
         $('#system').html(e.message);
@@ -71,9 +73,27 @@ async function init() {
                 <a class="nav-link" href="#" id="log-off">Log off</a>
             </li>
         `);
+        await chrome.storage.local.set({ "abs_account": account });
         $('#log-off').click(logoff);
         $('#playlist-options').click(function() { window.location.href = 'playlists.html' });
-        playlist();
+        chrome.storage.local.get('abs_newData', function(result) {
+            if(result.abs_newData !== undefined) {
+                localStorage.setItem('abs_account', JSON.stringify(result.abs_newData));
+                chrome.storage.local.remove('abs_newData', () => { 
+                    try {
+                        axios.put('http://chuadevs.com:12312/v1/account.sync', account);
+                        location.reload();
+                    } catch(e) {
+                        console.log(e.message);
+                    }
+                });
+            } else {
+                console.log(`nothing to delete`);
+                playlist();
+            }
+            
+        });
+        
     } else {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
