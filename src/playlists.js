@@ -88,17 +88,17 @@ async function query(event) {
 function nav() { 
     $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
-                <a class="nav-link" href="#" id="account-options">Account Options</a>
+                <a class="nav-link" href="#" id="account-manager">Account Manager</a>
             </li>
             <li class="nav-item ms-auto">
-                <a class="nav-link" href="#" id="playlist-options">Playlist Options</a>
+                <a class="nav-link" href="#" id="playlist-view">Return to Playlists</a>
             </li>
             <li class="nav-item ms-auto">
                 <a class="nav-link" href="#" id="log-off">Log off</a>
             </li>
     `);
     $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
-    $('#playlist-options').click(function() { window.location.href = 'playlists.html' });
+    $('#playlist-views').click(function() { window.location.href = 'popup.html' });
 }
 
 function main() {

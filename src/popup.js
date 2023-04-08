@@ -98,10 +98,10 @@ async function init() {
     if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
-                <a class="nav-link" href="#" id="account-options">Account Options</a>
+                <a class="nav-link" href="#" id="account-manager">Account Manager</a>
             </li>
             <li class="nav-item ms-auto">
-                <a class="nav-link" href="#" id="playlist-options">Playlist Options</a>
+                <a class="nav-link" href="#" id="playlist-manager">Playlist Manager</a>
             </li>
             <li class="nav-item ms-auto">
                 <a class="nav-link" href="#" id="log-off">Log off</a>
@@ -109,7 +109,7 @@ async function init() {
         `);
         await chrome.storage.local.set({ "abs_account": account });
         $('#log-off').click(logoff);
-        $('#playlist-options').click(function() { window.location.href = 'playlists.html' });
+        $('#playlist-manager').click(function() { window.location.href = 'playlists.html' });
         chrome.storage.local.get('abs_newData', function(result) {
             if(result.abs_newData !== undefined) {
                 localStorage.setItem('abs_account', JSON.stringify(result.abs_newData));
