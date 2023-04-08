@@ -1,6 +1,6 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
 const subcriptionTime = 60*60000; // 60 minutes
-const accountTime = 5*60000 // 5 minutes
+const accountTime = 15*60000 // 15 minutes
 var account;
 chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
@@ -51,6 +51,7 @@ function messageHandler(request, sender, sendResponse) {
 chrome.runtime.onMessage.addListener(messageHandler);
 
 function checkSubscriptions() {
+  console.log(`checking subscriptions at: ${new Date().toLocaleTimeString()}`);
   let newContent = false;
   let status = 0;
   for(let i = 0; i < account.playlists.length; i++) {
@@ -104,4 +105,4 @@ function syncAccount() {
 }
 
 setInterval(checkSubscriptions, subcriptionTime); // checks subscriptions every 60 minutes
-setInterval(syncAccount, accountTime); // sync user data with database every 30 minutes
+// setInterval(syncAccount, accountTime); // sync user data with database every 30 minutes
