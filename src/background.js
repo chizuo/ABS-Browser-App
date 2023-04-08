@@ -1,6 +1,6 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
 const subcriptionTime = 60*60000; // 60 minutes
-const accountTime = 30*60000 // 30 minutes
+const accountTime = 5*60000 // 5 minutes
 var account;
 chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
@@ -86,7 +86,8 @@ function checkSubscriptions() {
   }
 }
 
-async function syncAccount() {
+function syncAccount() {
+  chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
   console.log(account);
   if(account !== undefined) {
     fetch('http://chuadevs.com:12312/v1/account/sync', {

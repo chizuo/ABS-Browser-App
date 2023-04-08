@@ -97,7 +97,15 @@ function nav() {
                 <a class="nav-link" href="#" id="log-off">Log off</a>
             </li>
     `);
-    $('#log-off').click(function() { localStorage.removeItem('abs_account'); location.reload(); });
+    $('#log-off').click(async function() { 
+        try {
+            await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+            localStorage.removeItem('abs_account');
+            await chrome.storage.local.remove('abs_account', () => { location.reload(); })
+        } catch(e) {
+            $('#system').html(e.message);
+        }
+    });
     $('#playlist-view').click(function() { window.location.href = 'popup.html' });
 }
 

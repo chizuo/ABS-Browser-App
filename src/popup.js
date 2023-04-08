@@ -39,14 +39,20 @@ function playlist() {
 async function markAll() {
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
+    account.actions += 1;
+    account.playlists[id].clicked += 1;
     for(let i = 0; i < account.playlists[id].contents.length; i++)
     {
         account.playlists[id].contents[i].viewed = viewed;
     }
-    account.actions += 1;
-    await chrome.storage.local.set({ "abs_account": account });
-    localStorage.setItem('abs_account', JSON.stringify(account));
-    location.reload();
+    try {
+        await chrome.storage.local.set({ "abs_account": account });
+        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+        localStorage.setItem('abs_account', JSON.stringify(account));
+        location.reload();
+    } catch(e) {
+        $('#system').html(e.message);
+    }
 }
 
 function playlistMenu() {
@@ -78,7 +84,14 @@ async function viewed(e) {
     account.playlists[playlist].contents[content].viewed = true;
     account.playlists[playlist].clicked += 1;
     account.actions += 1;
-    localStorage.setItem('abs_account', JSON.stringify(account));
+    try {
+        await chrome.storage.local.set({ "abs_account": account });
+        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+        localStorage.setItem('abs_account', JSON.stringify(account));
+        location.reload();
+    } catch(e) {
+        $('#system').html(e.message);
+    }
     $(this).hide();
     window.open(url)
 }
