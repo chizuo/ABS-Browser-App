@@ -1,6 +1,5 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
-const subcriptionTime = 60*60000; // 60 minutes
-const accountTime = 15*60000 // 15 minutes
+var log;
 var account;
 chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
@@ -31,29 +30,9 @@ const playlist = {
       ]
 }
 
-function messageHandler(request, sender, sendResponse) {
-  if (request.action === 'get_data') {
-    // Make an API call using the fetch to scraper service
-    fetch('http://localhost:1583')
-      .then(response => response.json())
-      .then(data => {
-        // Send the data back to the content script
-        sendResponse({data: data});
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-    // Return true to indicate that the response will be sent asynchronously
-    return true;
-  }
-}
-
-chrome.runtime.onMessage.addListener(messageHandler);
-
 function checkSubscriptions() {
-  console.log(`checking subscriptions at: ${new Date().toLocaleTimeString()}`);
+  console.log(`${new Date().toLocaleTimeString()} : checking subscriptions`);
   let newContent = false;
-  let status = 0;
   for(let i = 0; i < account.playlists.length; i++) {
     fetch('http://chuadevs.com:12312/v1/api/youtube', {
       method: "PUT",
@@ -62,10 +41,9 @@ function checkSubscriptions() {
         'Content-Type': 'application/json'
       }
     }).then(response => {
-      status = response.status;
       if(response.status === 200) return response.json();
       else if(response.status === 204) return;
-      else throw new Error("unexpected status code");
+      else throw new Error(`status:${response.status}, message:${response.statusText}`);
     }).then(data => {
       if(data) {
         newContent = true;
@@ -73,36 +51,44 @@ function checkSubscriptions() {
           account.playlists[i].contents.push(data[j]);
         }
       }
-    }).catch(error => console.error(`ERROR: ${error}`)); 
-    if(newContent) {
-      chrome.storage.local.set({ "abs_account": account });
-      chrome.storage.local.set({ 'abs_newData' : account });
-      chrome.notifications.create({
-        type: 'basic',
-        iconUrl: '../assets/img/active/playlist_tracker_icon_128.png',
-        title: 'A Better Subscription Service',
-        message: `You have new content to view`
+    }).catch(error => console.error(`${new Date().toLocaleTimeString()} : ${account.email} : ${error}`)); 
+  }
+
+  if(newContent) {
+    chrome.storage.local.set({ "abs_account": account }, () => {
+      chrome.storage.local.set({ 'abs_newData' : account }, () => {
+        chrome.notifications.create({
+          type: 'basic',
+          iconUrl: '../assets/img/active/playlist_tracker_icon_128.png',
+          title: 'A Better Subscription Service',
+          message: `You have new content to view`
+        });
       });
-    } 
+    });
+  } else {
+    chrome.storage.local.get('abs_fetchLog', result => {
+      log = result.abs_fetchLog;
+      let msg = 'checked subscriptions, no new content'
+      if(log !== undefined)
+        log.push(`${new Date().toLocaleTimeString()} : ${msg}`);
+      else
+        log = [`${new Date().toLocaleTimeString()} : ${msg}`];
+      chrome.storage.local.set({'abs_fetchLog': log});
+    });
   }
 }
 
-function syncAccount() {
-  chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
-  console.log(account);
-  if(account !== undefined) {
-    fetch('http://chuadevs.com:12312/v1/account/sync', {
-      method: "PUT",
-      body:JSON.stringify(account),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => { 
-      if(response.ok)
-        console.log(`Background Sync Status: ${response.status}`);
-    }).catch(error => console.error(`ERROR: ${error.message}`)); 
-  }
-}
+chrome.alarms.create("checkSubscriptions", { periodInMinutes: 60 });
 
-setInterval(checkSubscriptions, subcriptionTime); // checks subscriptions every 60 minutes
-// setInterval(syncAccount, accountTime); // sync user data with database every 30 minutes
+chrome.alarms.onAlarm.addListener( alarm => {
+  if (alarm.name === "checkSubscriptions") {
+    chrome.storage.local.get('abs_account', result => { 
+      account = result.abs_account; 
+      if(account !== undefined)
+        checkSubscriptions();
+      else
+        console.error(`${new Date().toLocaleTimeString()} : account is undefined`);
+    });
+  }
+});
+

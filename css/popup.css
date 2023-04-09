@@ -56,7 +56,3 @@ ul.playlist li:nth-child(even) {
 .options-icon {
    width: 5%;
 }
-
-.popup-menu {
-   z-index: 1;
-}

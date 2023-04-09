@@ -121,8 +121,8 @@ async function init() {
         `);
         await chrome.storage.local.set({ "abs_account": account });
         $('#log-off').click(logoff);
-        $('#playlist-manager').click(function() { window.location.href = 'playlists.html' });
-        chrome.storage.local.get('abs_newData', function(result) {
+        $('#playlist-manager').click(() => { window.location.href = 'playlists.html' });
+        chrome.storage.local.get('abs_newData', result => {
             if(result.abs_newData !== undefined) {
                 localStorage.setItem('abs_account', JSON.stringify(result.abs_newData));
                 chrome.storage.local.remove('abs_newData', () => { 
@@ -134,8 +134,18 @@ async function init() {
                     }
                 });
             } else {
-                console.log(`No new content`);
-                playlist();
+                chrome.storage.local.get('abs_fetchLog', result => {
+                    log = result.abs_fetchLog;
+                    if(log !== undefined) {
+                        for(let i = 0; i < log.length; i++) {
+                            console.log(log[i]);
+                        }
+                        chrome.storage.local.remove('abs_fetchLog', () => { playlist(); });
+                    } else {
+                        console.log('fetchLog is undefined');
+                        playlist();
+                    }
+                });
             } 
         });  
     } else {
