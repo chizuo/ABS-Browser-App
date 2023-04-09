@@ -43,7 +43,37 @@ function updatePlaylistName() {
 }
 
 function contentManager() {
+    for(let i = 0; i < account.playlists.length; i++) {            
+        let { playlist_title, contents }  = account.playlists[i];
+        $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
+            <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
+            <span class="mx-1">${playlist_title}</span>
+            <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
+            <span class="popup-menu" id="popup-menu${i}">
+                <ul>
+                    <li><button class="mark-all my-1 btn btn-secondary border button-container" type="button" id="${i}" marker="watch">Mark all as watched</button></li>
+                    <li><button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="unwatch">Mark all unwatched</button></li>
+                </ul>
+            </span>
+        </div>
+        <ul class="playlist" id="playlist-${i}"></ul>`);
+        for(let j = 0; j < contents.length; j++) {
+            if(!contents[j].viewed)
+                $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
+        }
+    }
+    $('.expansion-button').click(hide);
+}
 
+function hide() {
+    let id = $(this).attr('index');
+    if($(`#playlist-${id}`).is(':hidden')) {
+        $(`#playlist-${id}`).show();
+        $(`#expansion-button-${id}`).html('<img src="assets/img/active/playlist_tracker_icon_24.png">');
+    } else {
+        $(`#playlist-${id}`).hide();
+        $(`#expansion-button-${id}`).html('<img src="assets/img/inactive/playlist_tracker_icon_24.png">');
+    }
 }
 
 function validateYoutube() {

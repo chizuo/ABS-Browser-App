@@ -1,6 +1,6 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
 const subcriptionTime = 60*60000; // 60 minutes
-const accountTime = 15*60000 // 15 minutes
+const test = 5*60000 // 5 minutes
 var account;
 chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
@@ -30,25 +30,6 @@ const playlist = {
           }
       ]
 }
-
-function messageHandler(request, sender, sendResponse) {
-  if (request.action === 'get_data') {
-    // Make an API call using the fetch to scraper service
-    fetch('http://localhost:1583')
-      .then(response => response.json())
-      .then(data => {
-        // Send the data back to the content script
-        sendResponse({data: data});
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-    // Return true to indicate that the response will be sent asynchronously
-    return true;
-  }
-}
-
-chrome.runtime.onMessage.addListener(messageHandler);
 
 function checkSubscriptions() {
   console.log(`checking subscriptions at: ${new Date().toLocaleTimeString()}`);
@@ -87,22 +68,19 @@ function checkSubscriptions() {
   }
 }
 
-function syncAccount() {
-  chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
-  console.log(account);
-  if(account !== undefined) {
-    fetch('http://chuadevs.com:12312/v1/account/sync', {
-      method: "PUT",
-      body:JSON.stringify(account),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => { 
-      if(response.ok)
-        console.log(`Background Sync Status: ${response.status}`);
-    }).catch(error => console.error(`ERROR: ${error.message}`)); 
-  }
+function checkSW() {
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: '../assets/img/active/playlist_tracker_icon_128.png',
+    title: 'A Better Subscription Service',
+    message: `I'm ALIVE`
+  });
 }
 
-setInterval(checkSubscriptions, subcriptionTime); // checks subscriptions every 60 minutes
-// setInterval(syncAccount, accountTime); // sync user data with database every 30 minutes
+chrome.alarms.create("checkSubscriptions", { periodInMinutes: 60 });
+
+chrome.alarms.onAlarm.addListener(function(alarm) {
+  if (alarm.name === "checkSubscriptions")
+    checkSubscriptions();
+});
+
