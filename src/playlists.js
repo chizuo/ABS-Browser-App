@@ -3,21 +3,15 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 
 function playlistManager() {
     $('#app').addClass('text-center');
-    $('#app').html(`
-        <div class="row align-items-md-stretch justify-content-center p-5">
-            <div class="col-md-6 mx-auto p-1">
-                <button class="btn btn-outline-secondary button-container" type="button" id="subscribe-button">Subscribe to a playlist</button>
-            </div>
-            <div class="col-md-6 mx-auto p-1">
-                <button class="btn btn-outline-secondary button-container" type="button" id="update-name-button">Update a playlist's name</button>
-            </div>
-            <div class="col-md-6 mx-auto p-1">
-                <button class="btn btn-outline-secondary button-container" type="button" id="content-button">Manage playlist content</button>
-            </div>
+    $('#app').html(`<br><br><center>
+        <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
+            <button type="button" class="btn btn-outline-secondary border" id="subscribe-button">Subscribe to playlist</button>
+            <button type="button" class="btn btn-outline-secondary border" id="playlist-name-button">Change playlist name</button>
+            <button type="button" class="btn btn-outline-secondary border" id="content-button">Manage playlist content</button>
         </div>
-    `);
+    </center>`);
     $('#subscribe-button').click(subscribe);
-    $('#update-name-button').click(updatePlaylistName);
+    $('#playlist-name-button').click(updatePlaylistName);
     $('#content-button').click(contentManager);
 }
 
@@ -45,7 +39,14 @@ function updatePlaylistName() {
 
 function contentManager() {
     $('#app').removeClass('text-center');
-    $('#app').empty();
+    $('#app').html(`<center>
+    <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
+        <button type="button" class="btn btn-primary">Watched</button>
+        <button type="button" class="btn btn-primary">Unwatched</button>
+        <button type="button" class="btn btn-primary">Delete</button>
+    </div>
+    </center>`);
+
     for(let i = 0; i < account.playlists.length; i++) {            
         let { playlist_title, contents }  = account.playlists[i];
         $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
