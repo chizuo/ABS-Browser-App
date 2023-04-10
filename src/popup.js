@@ -77,7 +77,7 @@ function hide() {
     }
 }
 
-async function viewed(e) {
+function viewed(e) {
     e.preventDefault();
     let url = $(this).attr('href');
     let playlist = $(this).attr('playlist');
@@ -86,10 +86,11 @@ async function viewed(e) {
     account.playlists[playlist].clicked += 1;
     account.actions += 1;
     try {
-        await chrome.storage.local.set({ "abs_account": account });
-        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-        localStorage.setItem('abs_account', JSON.stringify(account));
-        location.reload();
+        chrome.storage.local.set({ "abs_account": account }, () => {
+            axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+            localStorage.setItem('abs_account', JSON.stringify(account));
+            location.reload();
+        }); 
     } catch(e) {
         $('#system').html(e.message);
     }
@@ -97,17 +98,17 @@ async function viewed(e) {
     window.open(url)
 }
 
-async function logoff() {
+function logoff() {
     try {
-        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+        axios.put('http://chuadevs.com:12312/v1/account/sync', account);
         localStorage.removeItem('abs_account');
-        await chrome.storage.local.remove('abs_account', () => { location.reload(); })
+        chrome.storage.local.remove('abs_account', () => { location.reload(); })
     } catch(e) {
         $('#system').html(e.message);
     }
 }
 
-async function init() {
+function init() {
     if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
@@ -120,12 +121,11 @@ async function init() {
                 <a class="nav-link" href="#" id="log-off">Log off</a>
             </li>
         `);
-        await chrome.storage.local.set({ "abs_account": account });
         $('#log-off').click(logoff);
         $('#playlist-manager').click(() => { window.location.href = 'playlists.html' });
-        chrome.storage.local.get('abs_newData', result => {
-            if(result.abs_newData !== undefined) {
-                localStorage.setItem('abs_account', JSON.stringify(result.abs_newData));
+        chrome.storage.local.get(['abs_newData', 'abs_account'], result => {
+            if(result.abs_newData) {
+                localStorage.setItem('abs_account', JSON.stringify(result.abs_account));
                 chrome.storage.local.remove('abs_newData', () => { 
                     try {
                         axios.put('http://chuadevs.com:12312/v1/account.sync', account);
