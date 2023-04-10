@@ -36,7 +36,7 @@ function playlist() {
     }
 }
 
-async function markAll() {
+function markAll() {
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
     account.actions += 1;
@@ -46,10 +46,11 @@ async function markAll() {
         account.playlists[id].contents[i].viewed = viewed;
     }
     try {
-        await chrome.storage.local.set({ "abs_account": account });
-        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-        localStorage.setItem('abs_account', JSON.stringify(account));
-        location.reload();
+        chrome.storage.local.set({ "abs_account": account }, async () => {
+            await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+            localStorage.setItem('abs_account', JSON.stringify(account));
+            location.reload();
+        });
     } catch(e) {
         $('#system').html(e.message);
     }
@@ -135,7 +136,7 @@ async function init() {
                 });
             } else {
                 chrome.storage.local.get('abs_fetchLog', result => {
-                    log = result.abs_fetchLog;
+                    let log = result.abs_fetchLog;
                     if(log !== undefined) {
                         for(let i = 0; i < log.length; i++) {
                             console.log(log[i]);

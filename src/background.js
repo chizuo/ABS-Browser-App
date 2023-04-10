@@ -1,5 +1,4 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
-var log;
 var account;
 chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
@@ -31,7 +30,6 @@ const playlist = {
 }
 
 function checkSubscriptions() {
-  console.log(`${new Date().toLocaleTimeString()} : checking subscriptions`);
   let newContent = false;
   for(let i = 0; i < account.playlists.length; i++) {
     fetch('http://chuadevs.com:12312/v1/api/youtube', {
@@ -67,7 +65,7 @@ function checkSubscriptions() {
     });
   } else {
     chrome.storage.local.get('abs_fetchLog', result => {
-      log = result.abs_fetchLog;
+      let log = result.abs_fetchLog;
       let msg = 'checked subscriptions, no new content'
       if(log !== undefined)
         log.push(`${new Date().toLocaleTimeString()} : ${msg}`);
