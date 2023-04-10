@@ -9,9 +9,7 @@ function notificationMessage(newContent) {
   return msg;
 }
 
-function checkSubscriptions(abs) {
-  let deserialized = JSON.stringify(abs);
-  let account = JSON.parse(deserialized);
+function checkSubscriptions(account) {
   let newContent = [];
   let promises = [];
 
