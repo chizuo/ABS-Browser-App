@@ -1,5 +1,4 @@
 const account = JSON.parse(localStorage.getItem('abs_account'));
-//chrome.storage.local.get('abs_account', function(result) { account = result.abs_account; });
 
 function playlist() {
     if(account.playlists.length === 0) {
@@ -109,6 +108,7 @@ function logoff() {
 }
 
 function init() {
+    $('#system').empty();
     if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
@@ -123,17 +123,23 @@ function init() {
         `);
         $('#log-off').click(logoff);
         $('#playlist-manager').click(() => { window.location.href = 'playlists.html' });
-        chrome.storage.local.get(['abs_newData', 'abs_account'], result => {
+        chrome.storage.local.get(['abs_newData', 'abs_account'], async result => {
             if(result.abs_newData) {
-                localStorage.setItem('abs_account', JSON.stringify(result.abs_account));
-                chrome.storage.local.remove('abs_newData', () => { 
-                    try {
-                        axios.put('http://chuadevs.com:12312/v1/account.sync', account);
+                try {
+                    let response = await axios.put('http://chuadevs.com:12312/v1/account/sync', result.abs_account);
+                    if(response.status === 200) { 
+                        chrome.storage.local.remove('abs_newData', () => {
+                            localStorage.setItem('abs_account', JSON.stringify(result.abs_account));
+                            location.reload(); 
+                        });
+                    } else { throw new Error(response.data); }
+                } catch(e) {
+                    console.error(e.message);
+                    setTimeout(() => {
+                        $('#system').html(e.message);
                         location.reload();
-                    } catch(e) {
-                        console.error(e.message);
-                    }
-                });
+                    }, 5000);
+                }
             } else {
                 chrome.storage.local.get('abs_fetchLog', result => {
                     let log = result.abs_fetchLog;

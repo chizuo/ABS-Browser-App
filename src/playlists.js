@@ -1,5 +1,4 @@
 const account = JSON.parse(localStorage.getItem('abs_account'));
-//chrome.storage.local.get('abs_account', result => { account = result.abs_account; })
 
 function playlistManager() {
     $('#app').addClass('text-center');
@@ -41,9 +40,9 @@ function contentManager() {
     $('#app').removeClass('text-center');
     $('#app').html(`<center>
     <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
-        <button type="button" class="btn btn-primary">Watched</button>
-        <button type="button" class="btn btn-primary">Unwatched</button>
-        <button type="button" class="btn btn-primary">Delete</button>
+        <button type="button" class="btn btn-primary content-manager" value="watch">Watched</button>
+        <button type="button" class="btn btn-primary content-manager" value="unwatch">Unwatched</button>
+        <button type="button" class="btn btn-primary content-manager" value="delete">Delete</button>
     </div>
     </center>`);
 
@@ -51,16 +50,39 @@ function contentManager() {
         let { playlist_title, contents }  = account.playlists[i];
         $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
             <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
-            <span class="mx-1">${playlist_title}</span>
+            <span class="mx-1">${playlist_title} (size: ${contents.length})</span>
         </div>
         <div class="playlist" id="playlist-${i}"></div>`);
         for(let j = 0; j < contents.length; j++) {
             let value = JSON.stringify({playlist:i, content:j});
-            $(`#playlist-${i}`).append(`<input type="checkbox" class="playlist-entry" value="${value}" id="playlist-entry${j}" name="playlist-entry${j}">
+            $(`#playlist-${i}`).append(`<input type="checkbox" class="playlist-entry" value=${value} id="playlist-entry${j}" name="playlist-entry${j}">
             <label class="checkbox-label" for="playlist-entry${j}">${contents[j].title}</label><br>`);
         }
     }
     $('.expansion-button').click(hide);
+    $('.content-manager').click(markSelected);
+}
+
+function markSelected() {
+    const selected = $('input[type="checkbox"]:checked');
+    const command = $(this).val();
+    account.actions += 1;
+    if(selected.length > 0) {
+        chrome.storage.local.set({'abs_newData': true}, () => {
+            selected.each(function() {
+                const { playlist, content} = JSON.parse($(this).val());
+                account.playlists[playlist].clicked += 1;
+                if(command === "watch") account.playlists[playlist].contents[content].viewed = true;
+                else if (command === "unwatch") account.playlists[playlist].contents[content].viewed = false;
+                else if (command === "delete") account.playlists[playlist].contents.splice(content, 1);
+                else console.log('command error');
+            });
+            localStorage.setItem('abs_account', JSON.stringify(account));
+            chrome.storage.local.set({'abs_account': account}, () => window.location.href = "popup.html");
+        });
+    } else {
+        window.location.href = "playlists.html";
+    }   
 }
 
 function hide() {
