@@ -27,6 +27,10 @@ function playlist() {
                     $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
             }
         }
+        $('#app').append(`<br><center><hr>
+            <div class="container" id="system"></div>
+            <p class="mt-2 mb-2 text-muted">© A Better Subscription 2023</p>
+        </center>`);
         $('.popup-menu').hide();
         $('.expansion-button').click(hide);
         $('.playlist-entry').click(viewed);
