@@ -51,7 +51,6 @@ function markAll() {
         chrome.storage.local.set({ "abs_account": account }, async () => {
             await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
             localStorage.setItem('abs_account', JSON.stringify(account));
-
             location.reload();
         });
     } catch(e) {

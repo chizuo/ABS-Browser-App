@@ -1,7 +1,6 @@
 const account = JSON.parse(localStorage.getItem('abs_account'));
 
 function playlistOptions() {
-    $('#app').addClass('text-center');
     $('#app').html(`<br><br><center>
         <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
             <button type="button" class="btn btn-secondary border" id="subscribe-button">Subscribe to a playlist</button>
@@ -35,24 +34,33 @@ function subscribe() {
 }
 
 function playlistManager() {
-    $('#app').removeClass('text-center');
     $('#app').empty();
     for(let i = 0; i < account.playlists.length; i++) {            
-        let { playlist_title } = account.playlists[i];
         $('#app').append(`<div class="bg-secondary text-bg-secondary border-top border-bottom title-bar py-1" index="${i}">
             <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/inactive/playlist_tracker_icon_24.png"></span> 
-            <span class="mx-1">${playlist_title}</span>
+            <span class="mx-1">${account.playlists[i].playlist_title}</span>
             <span class="playlist-menu" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
             <span class="popup-menu btn-group" id="popup-menu${i}">
                 <button class="rename btn btn-secondary border" type="button" id="${i}">Rename</button>
-                <button class="delete btn btn-secondary border" type="button" id="${i}">Delete</button>
+                <button class="unsubscribe btn btn-secondary border" type="button" id="${i}">Unsubscribe</button>
             </span>
         </div>`);
     }
     footer();
     $('.popup-menu').hide();
     $('.playlist-menu').click(playlistMenu);
-    
+    $('.unsubscribe').click(unsubscribe);
+}
+
+function unsubscribe() {
+    let id = $(this).attr('id');
+    account.actions += 1;
+    $('.btn').prop('disabled', true);
+    chrome.storage.local.set({'abs_newData': true}, () => { 
+        account.playlists.splice(id, 1);
+        localStorage.setItem('abs_account', JSON.stringify(account));
+        chrome.storage.local.set({'abs_account': account}, () => window.location.href = "popup.html");
+    });
 }
 
 function playlistMenu() {
@@ -66,7 +74,6 @@ function playlistMenu() {
 }
 
 function contentManager() {
-    $('#app').removeClass('text-center');
     $('#app').html(`<center>
     <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
         <button type="button" class="btn btn-primary content-manager border" value="watch">Watched</button>
