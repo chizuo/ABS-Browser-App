@@ -4,7 +4,7 @@ chrome.alarms.create("checkSubscriptions", { delayInMinutes: 5, periodInMinutes:
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === "checkSubscriptions") {
     chrome.storage.local.get('abs_account', result => { 
-      if(result.abs_account !== undefined) checkSubscriptions(result.abs_account, 5000);
+      if(result.abs_account !== undefined) checkSubscriptions(result.abs_account, 1);
       else console.error(`${new Date().toLocaleTimeString()} : account is undefined, fetch call cancelled`);
     });
   }
@@ -19,7 +19,7 @@ function notificationMessage(newContent) {
   return msg;
 }
 
-function checkSubscriptions(account, timeOut) {
+function checkSubscriptions(account, attempt) {
   let newContent = [];
   let promises = [];
 
@@ -42,14 +42,15 @@ function checkSubscriptions(account, timeOut) {
         }
       }
     }).catch(error => {
-      console.error(`${new Date().toLocaleTimeString()} : ${error}`);
-      setTimeout(() => {
-        chrome.storage.local.get('abs_account', result => { 
-          account = result.abs_account;
-          timeOut *= 3;
-          checkSubscriptions(account, timeOut);
-        });
-      }, 000);
+      console.error(`${new Date().toLocaleTimeString()} : Attempt#${attempt}: ${error}`);
+      if(attempt <= 10) {
+        setTimeout(() => {
+          chrome.storage.local.get('abs_account', result => { 
+            account = result.abs_account;
+            checkSubscriptions(account, ++attempt);
+          });
+        }, 6000);
+      }
     }); 
     promises.push(promise);
   }
