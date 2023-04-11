@@ -138,7 +138,7 @@ function init() {
                     setTimeout(() => {
                         $('#system').html(e.message);
                         location.reload();
-                    }, 5000);
+                    }, 10000);
                 }
             } else {
                 chrome.storage.local.get('abs_fetchLog', result => {
