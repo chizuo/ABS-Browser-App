@@ -1,4 +1,14 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
+chrome.alarms.create("checkSubscriptions", { delayInMinutes: 5, periodInMinutes: 30 });
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === "checkSubscriptions") {
+    chrome.storage.local.get('abs_account', result => { 
+      if(result.abs_account !== undefined) checkSubscriptions(result.abs_account, 5000);
+      else console.error(`${new Date().toLocaleTimeString()} : account is undefined, fetch call cancelled`);
+    });
+  }
+});
 
 function notificationMessage(newContent) {
   let msg = "New content for: ";
@@ -9,7 +19,7 @@ function notificationMessage(newContent) {
   return msg;
 }
 
-function checkSubscriptions(account) {
+function checkSubscriptions(account, timeOut) {
   let newContent = [];
   let promises = [];
 
@@ -31,7 +41,16 @@ function checkSubscriptions(account) {
           account.playlists[i].contents.push(data[j]);
         }
       }
-    }).catch(error => console.error(`${new Date().toLocaleTimeString()} : ${error}`)); 
+    }).catch(error => {
+      console.error(`${new Date().toLocaleTimeString()} : ${error}`);
+      setTimeout(() => {
+        chrome.storage.local.get('abs_account', result => { 
+          account = result.abs_account;
+          timeOut *= 3;
+          checkSubscriptions(account, timeOut);
+        });
+      }, 000);
+    }); 
     promises.push(promise);
   }
 
@@ -60,14 +79,4 @@ function checkSubscriptions(account) {
   });
 }
 
-chrome.alarms.create("checkSubscriptions", { periodInMinutes: 30 });
-
-chrome.alarms.onAlarm.addListener( alarm => {
-  if (alarm.name === "checkSubscriptions") {
-    chrome.storage.local.get('abs_account', result => { 
-      if(result.abs_account !== undefined) checkSubscriptions(result.abs_account);
-      else console.error(`${new Date().toLocaleTimeString()} : account is undefined, fetch call cancelled`);
-    });
-  }
-});
 
