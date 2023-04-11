@@ -26,7 +26,7 @@ function checkSubscriptions(account) {
       else throw new Error(`status:${response.status}, message:${response.statusText}`);
     }).then(data => {
       if(data) {
-        newContent.push(`${account.playlists[i].playlist_title}`)
+        newContent.push(`${account.playlists[i].playlist_title}`);
         for(let j = 0; j < data.length; j++) {
           account.playlists[i].contents.push(data[j]);
         }
@@ -60,7 +60,7 @@ function checkSubscriptions(account) {
   });
 }
 
-chrome.alarms.create("checkSubscriptions", { periodInMinutes: 60 });
+chrome.alarms.create("checkSubscriptions", { periodInMinutes: 30 });
 
 chrome.alarms.onAlarm.addListener( alarm => {
   if (alarm.name === "checkSubscriptions") {
