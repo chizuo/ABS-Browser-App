@@ -56,3 +56,9 @@ ul.playlist li:nth-child(even) {
 .options-icon {
    width: 5%;
 }
+
+#system {
+   align-items: center;
+   color: red;
+   font-size: small;
+}
