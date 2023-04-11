@@ -1,16 +1,17 @@
 const account = JSON.parse(localStorage.getItem('abs_account'));
 
-function playlistManager() {
+function playlistOptions() {
     $('#app').addClass('text-center');
     $('#app').html(`<br><br><center>
         <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
-            <button type="button" class="btn btn-outline-secondary border" id="subscribe-button">Subscribe to playlist</button>
-            <button type="button" class="btn btn-outline-secondary border" id="playlist-name-button">Change playlist name</button>
-            <button type="button" class="btn btn-outline-secondary border" id="content-button">Manage playlist content</button>
+            <button type="button" class="btn btn-secondary border" id="subscribe-button">Subscribe to a playlist</button>
+            <button type="button" class="btn btn-secondary border" id="playlists-button">Manage playlists</button>
+            <button type="button" class="btn btn-secondary border" id="content-button">Manage playlist contents</button>
         </div>
     </center>`);
+    footer();
     $('#subscribe-button').click(subscribe);
-    $('#playlist-name-button').click(updatePlaylistName);
+    $('#playlists-button').click(playlistManager);
     $('#content-button').click(contentManager);
 }
 
@@ -27,38 +28,66 @@ function subscribe() {
             <div class="container" id="system"></div>
         </div>
     `);
+    footer();
     $('#subscription-button').click(query);
     $('#subscription-button').prop('disabled', true);
     $('#playlist-url').on('input', validateYoutube);
 }
 
-function updatePlaylistName() {
+function playlistManager() {
+    $('#app').removeClass('text-center');
+    $('#app').empty();
+    for(let i = 0; i < account.playlists.length; i++) {            
+        let { playlist_title } = account.playlists[i];
+        $('#app').append(`<div class="bg-secondary text-bg-secondary border-top border-bottom title-bar py-1" index="${i}">
+            <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/inactive/playlist_tracker_icon_24.png"></span> 
+            <span class="mx-1">${playlist_title}</span>
+            <span class="playlist-menu" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
+            <span class="popup-menu btn-group" id="popup-menu${i}">
+                <button class="rename btn btn-secondary border" type="button" id="${i}">Rename</button>
+                <button class="delete btn btn-secondary border" type="button" id="${i}">Delete</button>
+            </span>
+        </div>`);
+    }
+    footer();
+    $('.popup-menu').hide();
+    $('.playlist-menu').click(playlistMenu);
+    
+}
 
+function playlistMenu() {
+    let id = $(this).attr('index');
+    if($(`#popup-menu${id}`).is(':hidden')) {
+        $('.popup-menu').hide();
+        $(`#popup-menu${id}`).show();
+    } else {
+        $(`#popup-menu${id}`).hide();
+    }
 }
 
 function contentManager() {
     $('#app').removeClass('text-center');
     $('#app').html(`<center>
     <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
-        <button type="button" class="btn btn-primary content-manager" value="watch">Watched</button>
-        <button type="button" class="btn btn-primary content-manager" value="unwatch">Unwatched</button>
-        <button type="button" class="btn btn-primary content-manager" value="delete">Delete</button>
+        <button type="button" class="btn btn-primary content-manager border" value="watch">Watched</button>
+        <button type="button" class="btn btn-primary content-manager border" value="unwatch">Unwatched</button>
+        <button type="button" class="btn btn-primary content-manager border" value="delete">Delete</button>
     </div>
     </center>`);
-
     for(let i = 0; i < account.playlists.length; i++) {            
         let { playlist_title, contents }  = account.playlists[i];
         $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
             <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
             <span class="mx-1">${playlist_title} (size: ${contents.length})</span>
         </div>
-        <div class="playlist" id="playlist-${i}"></div>`);
+        <ul class="playlist" id="playlist-${i}"></ul>`);
         for(let j = 0; j < contents.length; j++) {
             let value = JSON.stringify({playlist:i, content:j});
-            $(`#playlist-${i}`).append(`<input type="checkbox" class="playlist-entry" value=${value} id="playlist-entry${j}" name="playlist-entry${j}">
-            <label class="checkbox-label" for="playlist-entry${j}">${contents[j].title}</label><br>`);
+            $(`#playlist-${i}`).append(`<li><input type="checkbox" class="playlist-entry" value=${value} id="playlist-entry${j}" name="playlist-entry${j}">
+            <label class="checkbox-label" for="playlist-entry${j}">${contents[j].title}</label></li>`);
         }
     }
+    footer();
     $('.expansion-button').click(hide);
     $('.content-manager').click(markSelected);
 }
@@ -177,11 +206,24 @@ function main() {
         <div id="app"></div>
     `);
     nav();
-    playlistManager();
+    playlistOptions();
+}
+
+function footer() {
+    $('#app').append(`<br><center><hr>
+    <div class="container" id="system"></div>
+    <p class="mt-2 mb-2 text-muted">© A Better Subscription 2023</p>
+    </center>`);
 }
 
 function init() {
     main();
 }
+
+$(document).click(function(e) {
+    if (!$(e.target).closest('.playlist-menu').length && !$(e.target).closest('.popup-menu').length) {
+      $('.popup-menu').hide();
+    }
+});
 
 $(document).ready(function() { init(); });
