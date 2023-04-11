@@ -1,5 +1,7 @@
 // background service of the extension that checks the subscribed playlists of the account at some set interval
-chrome.alarms.create("checkSubscriptions", { delayInMinutes: 5, periodInMinutes: 30 });
+chrome.runtime.onStartup.addListener(() => {
+  chrome.alarms.create("checkSubscriptions", { delayInMinutes: 5, periodInMinutes: 40 });
+});
 
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === "checkSubscriptions") {
