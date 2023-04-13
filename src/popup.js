@@ -38,7 +38,7 @@ function playlist() {
     }
 }
 
-function markAll() {
+async function markAll() {
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
     $('.mark-all').prop('disabled', true);
@@ -47,15 +47,16 @@ function markAll() {
     for(let i = 0; i < account.playlists[id].contents.length; i++) {
         account.playlists[id].contents[i].viewed = viewed;
     }
-    chrome.storage.local.set({ "abs_account": account }, async () => {
-        try {
-            await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-        localStorage.setItem('abs_account', JSON.stringify(account));
-        location.reload();
-        } catch(e) {
-            $('#system').html(e.message);
-        }
-    }); 
+    try {
+        await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
+        chrome.storage.local.set({ "abs_account": account }, () => {
+            localStorage.setItem('abs_account', JSON.stringify(account));
+            location.reload();
+        });  
+    } catch(e) {
+        $('#system').html(e.message);
+    }
+    
 }
 
 function playlistMenu() {
