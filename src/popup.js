@@ -47,15 +47,15 @@ function markAll() {
     for(let i = 0; i < account.playlists[id].contents.length; i++) {
         account.playlists[id].contents[i].viewed = viewed;
     }
-    try {
-        chrome.storage.local.set({ "abs_account": account }, async () => {
+    chrome.storage.local.set({ "abs_account": account }, async () => {
+        try {
             await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-            localStorage.setItem('abs_account', JSON.stringify(account));
-            location.reload();
-        });
-    } catch(e) {
-        $('#system').html(e.message);
-    }
+        localStorage.setItem('abs_account', JSON.stringify(account));
+        location.reload();
+        } catch(e) {
+            $('#system').html(e.message);
+        }
+    }); 
 }
 
 function playlistMenu() {
@@ -135,7 +135,9 @@ function init() {
                             localStorage.setItem('abs_account', JSON.stringify(result.abs_account));
                             location.reload(); 
                         });
-                    } else { throw new Error(response.data); }
+                    } else { 
+                        throw new Error(response.data); 
+                    }
                 } catch(e) {
                     console.error(e.message);
                     setTimeout(() => {
