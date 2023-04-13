@@ -154,7 +154,7 @@ async function query(event) {
     try {
         const url = $('#playlist-url').val();
         for(let i = 0; i < account.playlists.length; i++) {
-            if(account.playlists[i].playlist_url == url) { new Error('You are already subscribed to this playlist'); }
+            if(account.playlists[i].playlist_url == url) { throw new Error('You are already subscribed to this playlist'); }
         }
         $('#subscription-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/api/youtube', { url: url });
