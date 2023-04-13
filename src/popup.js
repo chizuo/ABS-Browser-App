@@ -55,6 +55,7 @@ async function markAll() {
         });  
     } catch(e) {
         $('#system').html(e.message);
+        $('.mark-all').prop('disabled', false);
     }
     
 }
