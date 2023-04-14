@@ -54,7 +54,7 @@ async function markAll() {
             location.reload();
         });  
     } catch(e) {
-        $('#system').html(e.message);
+        $('#system').html(e.response.data.error.message);
         $('.mark-all').prop('disabled', false);
     }
     
@@ -96,7 +96,7 @@ function viewed(e) {
             location.reload();
         }); 
     } catch(e) {
-        $('#system').html(e.message);
+        $('#system').html(e.response.data.error.message);
     }
     $(this).hide();
     window.open(url)
@@ -108,7 +108,7 @@ function logoff() {
         localStorage.removeItem('abs_account');
         chrome.storage.local.remove('abs_account', () => { location.reload(); })
     } catch(e) {
-        $('#system').html(e.message);
+        $('#system').html(e.response.data.error.message);
     }
 }
 
@@ -139,7 +139,7 @@ function init() {
                 } catch(e) {
                     console.error(e.response.data.error.message);
                     setTimeout(() => {
-                        $('#system').html(e.message);
+                        $('#system').html(e.response.data.error.message);
                         location.reload();
                     }, 10000);
                 }
