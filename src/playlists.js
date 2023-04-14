@@ -154,20 +154,16 @@ async function query(event) {
     try {
         const url = $('#playlist-url').val();
         for(let i = 0; i < account.playlists.length; i++) {
-            if(account.playlists[i].playlist_url == url) { new Error('You are already subscribed to this playlist'); }
+            if(account.playlists[i].playlist_url == url) { throw new Error('You are already subscribed to this playlist'); }
         }
         $('#subscription-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/api/youtube', { url: url });
-        if(response.status === 200) {
-            account.playlists.push(response.data);
-            localStorage.setItem('abs_account',  JSON.stringify(account));
-            const sync = await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-            if(sync.status === 200)
-                window.location.href = 'popup.html';
-        }
+        account.playlists.push(response.data);
+        chrome.storage.local.set({ 'abs_account' : account }, () => localStorage.setItem('abs_account',  JSON.stringify(account)));
+        chrome.storage.local.set({ 'abs_newData' : true }, () => window.location.href = 'popup.html');
     } catch(e) {
         $('#subscription-button').prop('disabled', false);
-        $('#system').html(e.message);
+        $('#system').html(e.response.data.error.message);
     }
 }
 
