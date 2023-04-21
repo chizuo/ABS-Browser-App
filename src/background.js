@@ -53,6 +53,13 @@ function checkSubscriptions(account, attempt) {
           for(let j = 0; j < update.length; j++) {
             for(let k = 0; k < account.playlists[i].contents.length; k++) {
               if(update[j].url === account.playlists[i].contents[k].url) {
+                chrome.storage.local.get('abs_fetchLog', result => {
+                  let log = result.abs_fetchLog;
+                  let msg = `${account.playlists[i].contents[k].title} has been updated to ${update[j].title}`;
+                  if(log !== undefined) log.push(`${new Date().toLocaleTimeString()} : ${msg}`);
+                  else log = [`${new Date().toLocaleTimeString()} : ${msg}`];
+                  chrome.storage.local.set({'abs_fetchLog': log});
+                });
                 account.playlists[i].contents[k].title = update[j].title;
                 break;
               }
@@ -66,6 +73,13 @@ function checkSubscriptions(account, attempt) {
             for(let k = 0; k < account.playlists[i].contents.length; k++) {
               if(remove[j].url === account.playlists[i].contents[k].url) {
                 account.playlists[i].contents.splice(k, 1);
+                chrome.storage.local.get('abs_fetchLog', result => {
+                  let log = result.abs_fetchLog;
+                  let msg = `${remove[j].title} has been removed from ${account.playlists[i].playlist_title}`;
+                  if(log !== undefined) log.push(`${new Date().toLocaleTimeString()} : ${msg}`);
+                  else log = [`${new Date().toLocaleTimeString()} : ${msg}`];
+                  chrome.storage.local.set({'abs_fetchLog': log});
+                });
                 break;
               }
             }
