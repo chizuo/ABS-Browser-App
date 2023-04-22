@@ -128,6 +128,7 @@ function init() {
         `);
         $('#log-off').click(logoff);
         $('#playlist-options').click(() => window.location.href = 'playlists.html');
+        $('#account-options').click(() => window.location.href = 'account.html');
         chrome.storage.local.get(['abs_newData', 'abs_account'], async result => {
             if(result.abs_newData) {
                 try {

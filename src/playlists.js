@@ -240,7 +240,8 @@ function nav() {
             $('#system').html(e.message);
         }
     });
-    $('#playlist-view').click(function() { window.location.href = 'popup.html' });
+    $('#playlist-view').click(() => window.location.href = 'popup.html');
+    $('#account-manager').click(() => window.location.href = 'account.html');
 }
 
 function main() {
