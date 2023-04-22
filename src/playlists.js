@@ -3,9 +3,10 @@ var popupFocus = true;
 
 function playlistOptions() {
     $('#app').html(`<br><br><center>
-        <div class="btn-group mr-1" role="group" aria-label="Button group with three buttons">
-            <button type="button" class="btn btn-secondary border" id="subscribe-button">Subscribe to a playlist</button>
-            <button type="button" class="btn btn-secondary border" id="playlists-button">Manage playlists</button>
+        <div class="btn-group mr-1" role="group" aria-label="Button group with four buttons">
+            <button type="button" class="btn btn-secondary border" id="subscribe-button">Subscribe</button>
+            <button type="button" class="btn btn-secondary border" data-bs-toggle="tooltip" data-bs-placement="top" title="this feaure coming soon!" id="changelog-button">Playlist change logs</button>
+            <button type="button" class="btn btn-secondary border" id="playlists-button">Manage my playlists</button>
             <button type="button" class="btn btn-secondary border" id="content-button">Manage playlist contents</button>
         </div>
     </center>`);
@@ -13,6 +14,7 @@ function playlistOptions() {
     $('#subscribe-button').click(subscribe);
     $('#playlists-button').click(playlistManager);
     $('#content-button').click(contentManager);
+    $('[data-bs-toggle="tooltip"]').tooltip();
 }
 
 function subscribe() {
