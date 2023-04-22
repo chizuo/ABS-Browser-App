@@ -12,6 +12,15 @@ chrome.alarms.onAlarm.addListener(alarm => {
   }
 });
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.action == "checkSubscriptions") {
+    chrome.storage.local.get('abs_account', result => { 
+      if(result.abs_account !== undefined) checkSubscriptions(result.abs_account, 1);
+      else console.error(`${new Date().toLocaleTimeString()} : account is undefined, fetch call cancelled`);
+    });
+  }
+});
+
 function notificationMessage(newContent) {
   let msg = "New content for: ";
   for(let i = 0; i < newContent.length; i++) {
