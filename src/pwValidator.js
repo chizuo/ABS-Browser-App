@@ -46,3 +46,12 @@ function validatePassword() {
         $('#register-button').prop('disabled', false);
     }
 }
+
+function validateEmail(button) {
+    const emailRegex = /\S+@\S+\.\S+/;
+    let email = $('#email').val();
+    if(emailRegex.test(email))
+        button.prop('disabled', false);
+    else
+        button.prop('disabled', true);
+}
