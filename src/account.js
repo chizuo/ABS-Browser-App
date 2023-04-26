@@ -3,15 +3,15 @@ const account = JSON.parse(localStorage.getItem('abs_account'));
 function accountOptions() {
     $('#app').html(`<br><br><center>
         <div class="btn-group mr-1" role="group" aria-label="Button group with four buttons">
-            <button type="button" class="btn btn-secondary border" id="email-button">Update email</button>
+            <button type="button" class="btn btn-secondary border" data-bs-toggle="tooltip" data-bs-placement="top" title="this feaure coming soon!" id="email-button">Update email</button>
             <button type="button" class="btn btn-secondary border" id="password-button">Update password</button>
             <button type="button" class="btn btn-secondary border" id="metrics-button">Account metrics</button>
         </div>
     </center>`);
     footer();
-    $('#email-button').click(emailUpdate);
     $('#password-button').click(passwordUpdate);
     $('#metrics-button').click(dashboard);
+    $('[data-bs-toggle="tooltip"]').tooltip();
 }
 
 function currentInfo() {
@@ -31,6 +31,7 @@ function currentInfo() {
     </form>`);
     footer();
     $('#update-form').addClass('mx-3 text-center form-signin');
+    $('#next-button').prop('disabled', true);
 }
 
 function dashboard() {
@@ -89,9 +90,7 @@ function dashboard() {
 }
 
 function emailUpdate() {
-    currentInfo();
-    $('#next-button').prop('disabled', true);
-    $('#email').on('input', function() { validateEmail() });
+    // future feature implementation
 }
 
 
@@ -154,16 +153,42 @@ function nav() {
 }
 
 function passwordUpdate() {
-
+    currentInfo();
+    $('#next-button').click(newPassword);
+    $('#email').on('input', () => validateEmail($('#next-button')) );
 }
 
-function validateEmail() {
-    const emailRegex = /\S+@\S+\.\S+/;
-    let email = $('#email').val();
-    if(emailRegex.test(email))
-        $('#next-button').prop('disabled', false);
-    else
-        $('#next-button').prop('disabled', true);
+function newPassword() {
+    $('#update-form').html(`
+    <div class="form-floating mt-2">
+        <input type="password" class="form-control rounded" id="password" placeholder="Password">
+        <label for="password">New Password</label>
+    </div>
+    <div class="form-floating">
+        <input type="password" class="form-control rounded" id="confirm-password" placeholder="Confirm Password">
+        <label for="confirm-password">Confirm Password</label>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" id="submit-button" type="submit">Submit</button>
+    `);
+
+    $('#submit-button').prop('disabled', true);
+    $('#confirm-password').prop('disabled', true);
+    $('#password').on('input', () => checkStrength($('#submit-button')));
+    $('#confirm-password').on('input', () => validatePassword($('#submit-button')));
+
+    $('form').submit(async function(event) {
+        event.preventDefault();
+        $('#system').html('make put call to rest api');
+
+        /*
+        try {
+            const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
+            localStorage.setItem('abs_account', JSON.stringify(response.data));
+            chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
+        } catch(e) {
+            $('#system').html(e.response.data.error.message);
+        } */
+    });
 }
 
 $(document).ready(function() { init(); });
