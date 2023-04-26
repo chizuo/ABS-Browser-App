@@ -1,9 +1,8 @@
-var lengthReq = false;
+/*var lengthReq = false;
 var upperReq = false;
 var numberReq = false;
 var startReq = false;
-var validEmail = false;
-const emailRegex = /\S+@\S+\.\S+/;
+var validEmail = false; */
 
 function registerForm() {
     $('#app').html(`
@@ -30,7 +29,7 @@ function registerForm() {
         <div class="container" id="system"></div>
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
-    $('#email').on('input', () => { validEmail = emailRegex.test($('#email').val()); });
+    $('#email').on('input', () => { validEmail = emailRegex.test($('#email').val()); checkStrength(); });
     $('#register-button').prop('disabled', true);
     $('#confirm-password').prop('disabled', true);
     $('#password').on('input', checkStrength);
@@ -60,7 +59,7 @@ async function login(event) {
         $('#system').html(e.response.data.error.message);
     }
 }
-
+/*
 function checkStrength() {
     let password = $('#password').val();
     let message = "";
@@ -103,13 +102,12 @@ function validatePassword() {
         $('#register-button').prop('disabled', false);
     }
 }
-
-function validateEmail() {
-    let email = $('#email').val();
-    if(emailRegex.test(email))
-        $('#signin-button').prop('disabled', false);
+*/
+function validateEmail(button) {
+    if(emailRegex.test($('#email').val()))
+        button.prop('disabled', false);
     else
-        $('#signin-button').prop('disabled', true);
+        button.prop('disabled', true);
 }
 
 function loginForm() {
@@ -133,7 +131,7 @@ function loginForm() {
         <div class="container" id="system"></div>
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
-    $('#email').on('input', function() { validateEmail() });
+    $('#email').on('input', () => validateEmail($('#signin-button')) );
     $('.register').click(registerForm);
     $('#signin-button').prop('disabled', true);
     $('#signin-button').click(login);

@@ -14,13 +14,87 @@ function accountOptions() {
     $('#metrics-button').click(dashboard);
 }
 
-function dashboard() {
+function currentInfo() {
+    $('#app').html(`<form id="update-form">
+        <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 fw-normal">Please provide the following</h1>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="email" placeholder="name@example.com">
+            <label for="email">Your current account email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="password" placeholder="Password">
+            <label for="password">Password</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" id="next-button">Next</button>
+        <div class="container" id="system"></div>
+    </form>`);
+    footer();
+    $('#update-form').addClass('mx-3 text-center form-signin');
+}
 
+function dashboard() {
+    let contentSize = 0;
+    $('#app').html(`<div class="container">
+    <div class="row rounded card-bg-primary text-light mt-2" style="margin-right:10px">
+        <div class="col-sm-4">
+            <div class="rounded card-bg-secondary text-light p-1 my-3">
+                <p class="small fw-bold">No. of playlists</p>
+                <p class="text-center lead">${account.playlists.length}</p>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rounded card-bg-secondary text-light p-1 my-3">
+                <p class="small fw-bold">Actions (all time)</p>
+                <p class="text-center lead">${account.actions}</p>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="rounded card-bg-secondary text-light p-1 my-3">
+                <p class="small fw-bold">Size (all contents)</p>
+                <p class="text-center lead" id="contents-size"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row playlists pt-2">
+    </div>
+    </div>`);
+    for(let i = 0; i < account.playlists.length; i++) {
+        contentSize += account.playlists[i].contents.length;
+        $('.playlists').append(`
+            <div class="row rounded card-bg-primary text-light p-3 mb-2">
+                <div class="col-sm-12">
+                    <div class="rounded card-bg-secondary p-2 mb-3">
+                        <p class="small fw-bold">Playlist Title</p>
+                        <p class="text-center lead">${account.playlists[i].playlist_title}</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="rounded card-bg-secondary p-2">
+                        <p class="small fw-bold">Size</p>
+                        <p class="text-center lead">${account.playlists[i].contents.length}</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="rounded card-bg-secondary p-2">
+                        <p class="small fw-bold">Actions</p>
+                        <p class="text-center lead">${account.playlists[i].clicked}</p>
+                    </div>
+                </div>
+            </div>
+        `);
+    }
+    $('#contents-size').html(`${contentSize}`);
 }
 
 function emailUpdate() {
-
+    currentInfo();
+    $('#next-button').prop('disabled', true);
+    $('#email').on('input', function() { validateEmail() });
 }
+
+
 
 function footer() {
     $('#app').append(`<br><center><hr>
@@ -81,6 +155,15 @@ function nav() {
 
 function passwordUpdate() {
 
+}
+
+function validateEmail() {
+    const emailRegex = /\S+@\S+\.\S+/;
+    let email = $('#email').val();
+    if(emailRegex.test(email))
+        $('#next-button').prop('disabled', false);
+    else
+        $('#next-button').prop('disabled', true);
 }
 
 $(document).ready(function() { init(); });
