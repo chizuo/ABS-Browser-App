@@ -10,10 +10,11 @@ function main() {
     } else {
         for(let i = 0; i < account.playlists.length; i++) {            
             let { playlist_title, contents }  = account.playlists[i];
+            let viewed = 0;
             $('#app').append(`<div class="bg-secondary text-bg-secondary border-top border-bottom title-bar py-1" index="${i}">
-                <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
+                <span class="expansion-button" data-bs-toggle="tooltip" data-bs-placement="top" title="click to toggle" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
                 <span class="mx-1">${playlist_title}</span>
-                <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
+                <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon"></span>
                 <span class="popup-menu btn-group" id="popup-menu${i}">
                     <button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="watch">Mark all as watched</button>
                     <button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="unwatch">Mark all unwatched</button>
@@ -23,12 +24,15 @@ function main() {
             for(let j = 0; j < contents.length; j++) {
                 if(!contents[j].viewed)
                     $(`#playlist-${i}`).append(`<li><a href="${contents[j].url}" class="playlist-entry" target="_blank" playlist="${i}" content="${j}">${contents[j].title}</a></li>`);
+                else viewed++;
+            }
+            console.log(`${account.playlists[i].playlist_title} => viewed: ${viewed}, size:${contents.length}`);
+            if(viewed === contents.length) {
+                $(`#playlist-${i}`).hide();
+                $(`#expansion-button-${i}`).html('<img src="assets/img/inactive/playlist_tracker_icon_24.png">');
             }
         }
-        $('#app').append(`<center><hr>
-            <div class="container" id="system"></div>
-            <p class="mt-2 mb-2 text-muted">© A Better Subscription 2023</p>
-        </center>`);
+        $('[data-bs-toggle="tooltip"]').tooltip();
         $('.mark-all').prop('disabled', false);
         $('.popup-menu').hide();
         $('.expansion-button').click(hide);
@@ -39,7 +43,7 @@ function main() {
 }
 
 async function markAll() {
-    $('#system').html(`<img src="./assets/img/loading.gif" id="floating-animation">`);
+    $('#system').html(`<img src="./assets/img/loading-200.gif" id="floating-animation">`);
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
     $('.mark-all').prop('disabled', true);
@@ -72,7 +76,7 @@ function playlistMenu() {
 }
 
 function hide() {
-    let id = $(this).attr('index');
+    let id =$(this).attr('index');
     if($(`#playlist-${id}`).is(':hidden')) {
         $(`#playlist-${id}`).show();
         $(`#expansion-button-${id}`).html('<img src="assets/img/active/playlist_tracker_icon_24.png">');
@@ -103,19 +107,9 @@ function viewed(e) {
     window.open(url)
 }
 
-function logoff() {
-    try {
-        $('#system').html(`<img id="floating-animation" src="./assets/img/loading.gif">`);
-        axios.put('http://chuadevs.com:12312/v1/account/sync', account);
-        localStorage.removeItem('abs_account');
-        chrome.storage.local.remove('abs_account', () => { location.reload(); })
-    } catch(e) {
-        $('#system').html(e.response.data);
-    }
-}
-
 function init() {
-    $('#system').html(`<img id="floating-animation" src="./assets/img/loading.gif">`);
+    app();
+    footer();
     if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
@@ -158,20 +152,7 @@ function init() {
                 });
             } 
         });  
-    } else {
-        $('.navbar-nav').html(`
-            <li class="nav-item ms-auto">
-              <a class="nav-link active" aria-current="page" href="login.html">Login</a>
-            </li>
-        `);
-        $('#app').html(`
-            <h3 id="account-warning">An account is required to use this extension and all of its features</h3>
-            <div class="p-3">
-                <a href="login.html" class="btn btn-secondary">Login</a>
-            </div>
-        `);
-        window.location.href = 'login.html'
-    }
+    } else { window.location.href = 'login.html'; }
 }
 
 function refresh() {
