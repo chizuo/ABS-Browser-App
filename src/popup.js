@@ -1,6 +1,6 @@
 const account = JSON.parse(localStorage.getItem('abs_account'));
 
-function playlist() {
+function main() {
     if(account.playlists.length === 0) {
         $('#app').html(`
             <div class="container p-5 text-center">
@@ -97,7 +97,7 @@ function viewed(e) {
             location.reload();
         }); 
     } catch(e) {
-        $('#system').html(e.response.data.error.message);
+        $('#system').html(e.response.data);
     }
     $(this).hide();
     window.open(url)
@@ -110,7 +110,7 @@ function logoff() {
         localStorage.removeItem('abs_account');
         chrome.storage.local.remove('abs_account', () => { location.reload(); })
     } catch(e) {
-        $('#system').html(e.response.data.error.message);
+        $('#system').html(e.response.data);
     }
 }
 
@@ -141,9 +141,7 @@ function init() {
                     });
                 } catch(e) {
                     console.error(e.response.data);
-                    setTimeout(() => {
-                        location.reload();
-                    }, 10000);
+                    setTimeout(() => location.reload(), 10000);
                 }
             } else {
                 chrome.storage.local.get('abs_fetchLog', result => {
@@ -152,10 +150,10 @@ function init() {
                         for(let i = 0; i < log.length; i++) {
                             console.log(log[i]);
                         }
-                        chrome.storage.local.remove('abs_fetchLog', () => playlist());
+                        chrome.storage.local.remove('abs_fetchLog', () => main());
                     } else {
                         console.log('fetchLog is undefined');
-                        playlist();
+                        main();
                     }
                 });
             } 
