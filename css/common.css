@@ -35,3 +35,15 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+.navbar-toggler-icon {
+    transform: scale(0.6);
+ }
+
+ #floating-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}

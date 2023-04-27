@@ -23,7 +23,7 @@ function registerForm() {
         <div class="container" id="system"></div>
         <p class="mt-5 mb-3 text-muted">© A Better Subscription 2023</p>
     `);
-    $('#email').on('input', () => { validEmail = emailRegex.test($('#email').val()); checkStrength(); });
+    $('#email').on('input', () => { validEmail = emailRegex.test($('#email').val()); checkStrength($('#register-button')); });
     $('#register-button').prop('disabled', true);
     $('#confirm-password').prop('disabled', true);
     $('#password').on('input', () => checkStrength($('#register-button')));
@@ -31,13 +31,16 @@ function registerForm() {
 
     $('form').submit(async function(event) {
         event.preventDefault();
+
         $('#system').html('');
         try {
+            $('#system').html(`<img class="floating-animation" src="./assets/img/loading.gif"`);
             const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
             localStorage.setItem('abs_account', JSON.stringify(response.data));
             chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
         } catch(e) {
-            $('#system').html(e.response.data.error.message);
+            console.log(e);
+            $('#system').html(`Error Status ${e.response.status} : ${e.response.data}`);
         }
     });
 }
@@ -46,11 +49,12 @@ async function login(event) {
     event.preventDefault();
     $('#system').html('');
     try {
+        $('#system').html(`<img class="floating-animation" src="./assets/img/loading.gif"`);
         const response = await axios.post('http://chuadevs.com:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
         chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
     } catch(e) {
-        $('#system').html(e.response.data.error.message);
+        $('#system').html(`Error Status ${e.response.status} : ${e.response.data}`);
     }
 }
 
@@ -86,4 +90,4 @@ function init() {
     $('#app').addClass('mx-3');
 }
 
-$(document).ready(function() { init(); });
+$(document).ready(() => init());

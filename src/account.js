@@ -102,10 +102,6 @@ function footer() {
     </center>`);
 }
 
-function init() {
-    main();
-}
-
 function main() {
     $('body').html(`
         <nav class="navbar navbar-light" style="background-color: #eef1ef;">
@@ -191,4 +187,4 @@ function newPassword() {
     });
 }
 
-$(document).ready(function() { init(); });
+$(document).ready(() => init());

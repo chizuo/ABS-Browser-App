@@ -39,6 +39,7 @@ function playlist() {
 }
 
 async function markAll() {
+    $('#system').html(`<img src="./assets/img/loading.gif" id="floating-animation">`);
     let id = $(this).attr('id');
     let viewed = $(this).attr('marker') === 'watch' ? true : false;
     $('.mark-all').prop('disabled', true);
@@ -54,7 +55,7 @@ async function markAll() {
             location.reload();
         });  
     } catch(e) {
-        $('#system').html(e.response.data.error.message);
+        $('#system').html(e.response.data);
         $('.mark-all').prop('disabled', false);
     }
     
@@ -104,6 +105,7 @@ function viewed(e) {
 
 function logoff() {
     try {
+        $('#system').html(`<img id="floating-animation" src="./assets/img/loading.gif">`);
         axios.put('http://chuadevs.com:12312/v1/account/sync', account);
         localStorage.removeItem('abs_account');
         chrome.storage.local.remove('abs_account', () => { location.reload(); })
@@ -113,7 +115,7 @@ function logoff() {
 }
 
 function init() {
-    $('#system').empty();
+    $('#system').html(`<img id="floating-animation" src="./assets/img/loading.gif">`);
     if(account) {
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
@@ -138,9 +140,8 @@ function init() {
                         location.reload(); 
                     });
                 } catch(e) {
-                    console.error(e.response.data.error.message);
+                    console.error(e.response.data);
                     setTimeout(() => {
-                        $('#system').html(e.response.data.error.message);
                         location.reload();
                     }, 10000);
                 }
@@ -181,7 +182,6 @@ function refresh() {
     } catch(err) {
         console.log('successfully work up service worker');
     }
-    
 }
 
 $(document).click(function(e) {
