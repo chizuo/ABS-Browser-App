@@ -93,8 +93,6 @@ function emailUpdate() {
     // future feature implementation
 }
 
-
-
 function footer() {
     $('#app').append(`<br><center><hr>
     <div class="container" id="system"></div>
@@ -150,11 +148,11 @@ function nav() {
 
 function passwordUpdate() {
     currentInfo();
-    $('#next-button').click(newPassword);
+    $('#next-button').click(() => newPassword($('#email').val(),$('#password').val()));
     $('#email').on('input', () => validateEmail($('#next-button')) );
 }
 
-function newPassword() {
+function newPassword(email, oldPassword) {
     $('#update-form').html(`
     <div class="form-floating mt-2">
         <input type="password" class="form-control rounded" id="password" placeholder="Password">
@@ -166,7 +164,6 @@ function newPassword() {
     </div>
     <button class="w-100 btn btn-lg btn-primary" id="submit-button" type="submit">Submit</button>
     `);
-
     $('#submit-button').prop('disabled', true);
     $('#confirm-password').prop('disabled', true);
     $('#password').on('input', () => checkStrength($('#submit-button')));
@@ -174,17 +171,17 @@ function newPassword() {
 
     $('form').submit(async function(event) {
         event.preventDefault();
-        $('#system').html('make put call to rest api');
-
-        /*
         try {
-            const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
-            localStorage.setItem('abs_account', JSON.stringify(response.data));
-            chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
+            account.actions += 1;
+            $('#submit-button').prop('disabled', true);
+            $('#system').html(`<img src="./assets/img/loading.gif" id="floating-animation">`);
+            await axios.put('http://chuadevs.com:12312/v1/account', { email: email, password: oldPassword, new_email: undefined, new_password: $('#password').val()});
+            $('#system').append('Update successful! Returning to your playlists page');
+            setTimeout(() => window.location.href = 'popup.html', 2500);
         } catch(e) {
-            $('#system').html(e.response.data.error.message);
-        } */
+            $('#system').html(e.response.data);
+        }
     });
 }
 
-$(document).ready(() => init());
+$(document).ready(() => main());
