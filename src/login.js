@@ -1,7 +1,7 @@
 async function login(event) {
     event.preventDefault();
     try {
-        $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif"`);
+        $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif">`);
         $('#signin-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
@@ -40,7 +40,7 @@ function loginForm() {
 async function register(event) {
     event.preventDefault();
     try {
-        $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif"`);
+        $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif">`);
         $('#register-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
