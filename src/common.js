@@ -21,7 +21,7 @@ function app() {
         </div>
       </div>
     </nav>
-    <div id="app"></div>
+    <div id="app" class="animate__animated animate__slideInRight"></div>
     `);
 }
 
