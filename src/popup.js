@@ -32,6 +32,7 @@ function main() {
                 $(`#expansion-button-${i}`).html('<img src="assets/img/inactive/playlist_tracker_icon_24.png">');
             }
         }
+        $('#system').empty();
         $('[data-bs-toggle="tooltip"]').tooltip();
         $('.mark-all').prop('disabled', false);
         $('.popup-menu').hide();
@@ -53,6 +54,7 @@ async function markAll() {
         account.playlists[id].contents[i].viewed = viewed;
     }
     try {
+        $('#system').html(`<img id="floating-animation" src="./assets/img/loading-200.gif">`);
         await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
         chrome.storage.local.set({ "abs_account": account }, () => {
             localStorage.setItem('abs_account', JSON.stringify(account));
@@ -95,6 +97,7 @@ function viewed(e) {
     account.playlists[playlist].clicked += 1;
     account.actions += 1;
     try {
+        $('#system').html(`<img id="floating-animation" src="./assets/img/loading-200.gif">`);
         chrome.storage.local.set({ "abs_account": account }, () => {
             axios.put('http://chuadevs.com:12312/v1/account/sync', account);
             localStorage.setItem('abs_account', JSON.stringify(account));
@@ -111,6 +114,7 @@ function init() {
     app();
     footer();
     if(account) {
+        $('#system').html(`<img id="floating-animation" src="./assets/img/loading-200.gif">`);
         $('.navbar-nav').html(`
             <li class="nav-item ms-auto">
                 <a class="nav-link" href="#" id="account-options">Account Options</a>
