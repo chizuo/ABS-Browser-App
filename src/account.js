@@ -14,7 +14,7 @@ function accountOptions() {
 }
 
 function currentInfo() {
-    $('#app').html(`<form id="update-form">
+    $('#app').html(`<form id="update-form" class="animate__animated animate__lightSpeedInRight">
         <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Please provide the following</h1>
         <div class="form-floating">
@@ -34,7 +34,7 @@ function currentInfo() {
 
 function dashboard() {
     let contentSize = 0;
-    $('#app').html(`<div class="container">
+    $('#app').html(`<div class="container animate__animated animate__zoomIn">
     <div class="row rounded card-bg-primary text-light mt-2" style="margin-right:10px">
         <div class="col-sm-4">
             <div class="rounded card-bg-secondary text-light p-1 my-3">
@@ -123,15 +123,15 @@ function passwordUpdate() {
 
 function newPassword(email, oldPassword) {
     $('#update-form').html(`
-    <div class="form-floating mt-2">
+    <div class="form-floating mt-2 animate__animated animate__lightSpeedInRight">
         <input type="password" class="form-control rounded" id="password" placeholder="Password">
         <label for="password">New Password</label>
     </div>
-    <div class="form-floating">
+    <div class="form-floating animate__animated animate__lightSpeedInRight">
         <input type="password" class="form-control rounded" id="confirm-password" placeholder="Confirm Password">
         <label for="confirm-password">Confirm Password</label>
     </div>
-    <button class="w-100 btn btn-lg btn-primary" id="submit-button" type="submit">Submit</button>
+    <button class="w-100 btn btn-lg btn-primary animate__animated animate__lightSpeedInRight" id="submit-button" type="submit">Submit</button>
     `);
     $('#submit-button').prop('disabled', true);
     $('#confirm-password').prop('disabled', true);
