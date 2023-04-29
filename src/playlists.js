@@ -18,7 +18,7 @@ function playlistOptions() {
 
 function subscribe() {
     $('#app').html(`
-        <div class="container p-3">
+        <div class="container p-3 animate__animated animate__lightSpeedInRight">
             <img class="mb-4" src="./assets/img/inactive/playlist_tracker_icon_128.png" alt="" width="72" height="72">
             <h1 class="h3 mb-3 fw-normal">Enter a YouTube playlist URL</h1>
             <div class="form-floating p-2">
@@ -38,13 +38,13 @@ function subscribe() {
 function playlistManager() {
     $('#app').empty();
     for(let i = 0; i < account.playlists.length; i++) {            
-        $('#app').append(`<div class="bg-secondary text-bg-secondary border-top border-bottom title-bar py-1" index="${i}">
+        $('#app').append(`<div class="bg-secondary text-bg-secondary border-top border-bottom title-bar py-1 animate__animated animate__slideInRight" index="${i}">
             <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/inactive/playlist_tracker_icon_24.png"></span> 
             <span class="mx-1" id="playlist-title${i}">${account.playlists[i].playlist_title}</span>
             <span class="playlist-menu" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
-            <span class="popup-menu btn-group" id="popup-menu${i}">
-                <button class="rename btn btn-secondary border" type="button" index="${i}">Rename</button>
-                <button class="unsubscribe btn btn-secondary border" type="button" index="${i}">Unsubscribe</button>
+            <span class="popup-menu animate__animated animate__headShake btn-group" id="popup-menu${i}">
+                <button class="rename btn btn-sm btn-primary border" type="button" index="${i}">Rename</button>
+                <button class="unsubscribe btn btn-sm btn-danger border" type="button" index="${i}">Unsubscribe</button>
             </span>
         </div>`);
     }
@@ -56,42 +56,36 @@ function playlistManager() {
 
 function rename() {
     let id = $(this).attr('index');
-    let DOMplaylist = $(`#playlist-title${id}`);
-    let DOMpopup = $(`#popup-menu${id}`);
-    let title = DOMplaylist.text();
-
-    DOMplaylist.data('prev', DOMplaylist.clone());
-    DOMpopup.data('prev', DOMpopup.clone());
-
-    DOMplaylist.html(`<input type="text" name="title" class="input-lg border rounded" id="title-input${id}" value="${title}">`);
-    DOMpopup.html(`
-        <button class="btn btn-secondary border" type="button" id="update">Update</button>
-        <button class="btn btn-secondary border" type="button" id="cancel">Cancel</button>
+    $(`#playlist-title${id}`).html(`<input type="text" name="title" class="input-lg border rounded" id="title-input${id}" prev="${$(`#playlist-title${id}`).text()}" value="${$(`#playlist-title${id}`).text()}">`);
+    $(`#popup-menu${id}`).data('prev',$(`#popup-menu${id}`).clone());
+    $(`#popup-menu${id}`).html(`
+        <button class="btn btn-sm btn-primary border" type="button" index=${id} id="update">Update</button>
+        <button class="btn btn-sm btn-danger border" type="button" index=${id} id="cancel">Cancel</button>
     `);
     $(`#title-input${id}`).on('focus', () => { 
         popupFocus = false;
         $(`#popup-menu${id}`).show(); 
     });
-
     $('#update').click(() => {
-        let value = $(`#title-input${id}`).val();
-        if(title === value) {
-            DOMplaylist.html(DOMplaylist.data('prev'));
-            DOMpopup.html(DOMpopup.data('prev'));
-            popupFocus = true;
-            $(`#popup-menu${id}`).hide(); 
+        let id = $(this).attr('index');
+        if($(`#title-input${id}`).attr('prev') === $(`#title-input${id}`).val()) {
+            updateCancel(id);
         } else {
             account.actions += 1;
             account.playlists[id].playlist_title = value;
             update("playlistManager");
         }
     });
-    $('#cancel').click(() => {
-        DOMplaylist.html(DOMplaylist.data('prev'));
-        DOMpopup.html(DOMpopup.data('prev'));
-        popupFocus = true;
-        $(`#popup-menu${id}`).hide(); 
-    });
+    $('#cancel').click(() => updateCancel($(this).attr('index')));
+}
+
+function updateCancel(id) {
+    $(`#playlist-title${id}`).html($(`#title-input${id}`).attr('prev'));
+    $(`#popup-menu${id}`).replaceWith($(`#popup-menu${id}`).data('prev'));
+    $('.unsubscribe').click(unsubscribe);
+    $('.rename').click(rename);
+    popupFocus = true;
+    $(`#popup-menu${id}`).hide(); 
 }
 
 function unsubscribe() {
@@ -126,7 +120,7 @@ function playlistMenu() {
 
 function contentManager() {
     $('#app').html(`<center class="mt-2 mb-1">
-    <div class="btn-group" role="group" aria-label="Button group with three buttons">
+    <div class="btn-group animate__animated animate__slideInDown" role="group" aria-label="Button group with three buttons">
         <button type="button" class="btn btn-primary content-manager border" value="watch">Watched</button>
         <button type="button" class="btn btn-primary content-manager border" value="unwatch">Unwatched</button>
         <button type="button" class="btn btn-primary content-manager border" value="delete">Delete</button>
@@ -134,14 +128,14 @@ function contentManager() {
     </center>`);
     for(let i = 0; i < account.playlists.length; i++) {            
         let { playlist_title, contents }  = account.playlists[i];
-        $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar" index="${i}">
+        $('#app').append(`<div class="bg-secondary text-bg-secondary p-1 border-top border-bottom title-bar animate__animated animate__slideInRight" index="${i}">
             <span class="expansion-button" data-bs-toggle="tooltip" data-bs-placement="top" title="click to toggle" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
             <span class="mx-1">${playlist_title} (size: ${contents.length})</span>
         </div>
         <ul class="playlist" id="playlist-${i}"></ul>`);
         for(let j = 0; j < contents.length; j++) {
             let value = JSON.stringify({playlist:i, content:j});
-            $(`#playlist-${i}`).append(`<li><input type="checkbox" class="playlist-entry" value=${value} id="playlist-entry${j}" name="playlist-entry${j}">
+            $(`#playlist-${i}`).append(`<li><input type="checkbox" class="playlist-entry animate__animated animate__slideInLeft" value=${value} id="playlist-entry${j}" name="playlist-entry${j}">
             <label class="checkbox-label" for="playlist-entry${j}">${contents[j].title}</label></li>`);
         }
         $(`#playlist-${i}`).hide();

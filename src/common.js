@@ -21,7 +21,7 @@ function app() {
         </div>
       </div>
     </nav>
-    <div id="app"></div>
+    <div id="app" class="animate__animated animate__slideInRight"></div>
     `);
 }
 
@@ -30,7 +30,7 @@ async function logoff() {
         $('#system').html(`<img id="floating-animation" src="./assets/img/loading-200.gif">`);
         await axios.put('http://chuadevs.com:12312/v1/account/sync', account);
         localStorage.removeItem('abs_account');
-        chrome.storage.local.remove('abs_account', () => { location.reload(); })
+        chrome.storage.local.remove('abs_account', () => window.location.href = 'login.html');
     } catch(e) {
         $('#system').html(e.response.data);
     }
