@@ -2,11 +2,13 @@ async function login(event) {
     event.preventDefault();
     try {
         $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif"`);
+        $('#signin-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/account/', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
         chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
     } catch(e) {
         $('#system').html(`Error Status ${e.response.status} : ${e.response.data}`);
+        $('#signin-button').prop('disabled', false);
     }
 }
 
@@ -39,11 +41,12 @@ async function register(event) {
     event.preventDefault();
     try {
         $('#system').html(`<img class="floating-animation" src="./assets/img/loading-200.gif"`);
+        $('#register-button').prop('disabled', true);
         const response = await axios.post('http://chuadevs.com:12312/v1/account/register', { email: $('#email').val(), password: $('#password').val() });
         localStorage.setItem('abs_account', JSON.stringify(response.data));
         chrome.storage.local.set({'abs_account': response.data}, () => window.location.href = 'popup.html');
     } catch(e) {
-        console.log(e);
+        $('#register-button').prop('disabled', false);
         $('#system').html(`Error Status ${e.response.status} : ${e.response.data}`);
     }
 }
