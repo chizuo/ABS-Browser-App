@@ -42,9 +42,9 @@ function playlistManager() {
             <span class="expansion-button" id="expansion-button-${i}" index="${i}"><img src="assets/img/inactive/playlist_tracker_icon_24.png"></span> 
             <span class="mx-1" id="playlist-title${i}">${account.playlists[i].playlist_title}</span>
             <span class="playlist-menu" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon" ></span>
-            <span class="popup-menu btn-group" id="popup-menu${i}">
-                <button class="rename btn btn-secondary border" type="button" index="${i}">Rename</button>
-                <button class="unsubscribe btn btn-secondary border" type="button" index="${i}">Unsubscribe</button>
+            <span class="popup-menu animate__animated animate__headShake btn-group" id="popup-menu${i}">
+                <button class="rename btn btn-sm btn-primary border" type="button" index="${i}">Rename</button>
+                <button class="unsubscribe btn btn-sm btn-danger border" type="button" index="${i}">Unsubscribe</button>
             </span>
         </div>`);
     }
@@ -56,42 +56,36 @@ function playlistManager() {
 
 function rename() {
     let id = $(this).attr('index');
-    let DOMplaylist = $(`#playlist-title${id}`);
-    let DOMpopup = $(`#popup-menu${id}`);
-    let title = DOMplaylist.text();
-
-    DOMplaylist.data('prev', DOMplaylist.clone());
-    DOMpopup.data('prev', DOMpopup.clone());
-
-    DOMplaylist.html(`<input type="text" name="title" class="input-lg border rounded" id="title-input${id}" value="${title}">`);
-    DOMpopup.html(`
-        <button class="btn btn-secondary border" type="button" id="update">Update</button>
-        <button class="btn btn-secondary border" type="button" id="cancel">Cancel</button>
+    $(`#playlist-title${id}`).html(`<input type="text" name="title" class="input-lg border rounded" id="title-input${id}" prev="${$(`#playlist-title${id}`).text()}" value="${$(`#playlist-title${id}`).text()}">`);
+    $(`#popup-menu${id}`).data('prev',$(`#popup-menu${id}`).clone());
+    $(`#popup-menu${id}`).html(`
+        <button class="btn btn-sm btn-primary border" type="button" index=${id} id="update">Update</button>
+        <button class="btn btn-sm btn-danger border" type="button" index=${id} id="cancel">Cancel</button>
     `);
     $(`#title-input${id}`).on('focus', () => { 
         popupFocus = false;
         $(`#popup-menu${id}`).show(); 
     });
-
     $('#update').click(() => {
-        let value = $(`#title-input${id}`).val();
-        if(title === value) {
-            DOMplaylist.html(DOMplaylist.data('prev'));
-            DOMpopup.html(DOMpopup.data('prev'));
-            popupFocus = true;
-            $(`#popup-menu${id}`).hide(); 
+        let id = $(this).attr('index');
+        if($(`#title-input${id}`).attr('prev') === $(`#title-input${id}`).val()) {
+            updateCancel(id);
         } else {
             account.actions += 1;
             account.playlists[id].playlist_title = value;
             update("playlistManager");
         }
     });
-    $('#cancel').click(() => {
-        DOMplaylist.html(DOMplaylist.data('prev'));
-        DOMpopup.html(DOMpopup.data('prev'));
-        popupFocus = true;
-        $(`#popup-menu${id}`).hide(); 
-    });
+    $('#cancel').click(() => updateCancel($(this).attr('index')));
+}
+
+function updateCancel(id) {
+    $(`#playlist-title${id}`).html($(`#title-input${id}`).attr('prev'));
+    $(`#popup-menu${id}`).replaceWith($(`#popup-menu${id}`).data('prev'));
+    $('.unsubscribe').click(unsubscribe);
+    $('.rename').click(rename);
+    popupFocus = true;
+    $(`#popup-menu${id}`).hide(); 
 }
 
 function unsubscribe() {

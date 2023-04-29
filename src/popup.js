@@ -15,9 +15,9 @@ function main() {
                 <span class="expansion-button" data-bs-toggle="tooltip" data-bs-placement="top" title="click to toggle" id="expansion-button-${i}" index="${i}"><img src="assets/img/active/playlist_tracker_icon_24.png"></span> 
                 <span class="mx-1">${playlist_title}</span>
                 <span class="playlist-menu mx-1" index="${i}"><img src="assets/img/option-icon.jpg" class="options-icon"></span>
-                <span class="popup-menu btn-group" id="popup-menu${i}">
-                    <button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="watch">Mark all as watched</button>
-                    <button class="mark-all btn btn-secondary border button-container" type="button" id="${i}" marker="unwatch">Mark all unwatched</button>
+                <span class="popup-menu btn-group animate__animated animate__headShake" id="popup-menu${i}">
+                    <button class="mark-all btn btn-sm btn-secondary border button-container" type="button" id="${i}" marker="watch">Mark all as watched</button>
+                    <button class="mark-all btn btn-sm btn-secondary border button-container" type="button" id="${i}" marker="unwatch">Mark all unwatched</button>
                 </span>
             </div>
             <ul class="playlist" id="playlist-${i}"></ul>`);
